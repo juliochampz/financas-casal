@@ -6,14 +6,7 @@
 <title>Finanças do Casal</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --az:#1a56db;--az2:#1e429f;--az-light:#ebf5ff;
-  --vd:#057a55;--vd-light:#f3faf7;
-  --vm:#e02424;--vm-light:#fdf2f2;
-  --am:#ff8c00;--am-light:#fffbeb;
-  --roxo:#7e3af2;--borda:#e5e7eb;--bg:#f9fafb;--branco:#fff;
-  --txt:#111827;--txt2:#374151;--txt3:#6b7280;
-}
+:root{--az:#1a56db;--az2:#1e429f;--az-light:#ebf5ff;--vd:#057a55;--vd-light:#f3faf7;--vm:#e02424;--vm-light:#fdf2f2;--am:#ff8c00;--am-light:#fffbeb;--roxo:#7e3af2;--borda:#e5e7eb;--bg:#f9fafb;--branco:#fff;--txt:#111827;--txt2:#374151;--txt3:#6b7280;}
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
 .topbar{background:linear-gradient(135deg,#1e3a8a,#1a56db);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .topbar-left{display:flex;align-items:center;gap:10px}
@@ -67,6 +60,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .btn-add:hover{background:var(--az2)}
 .lancamentos-list{display:flex;flex-direction:column;gap:8px}
 .lanc-item{background:var(--branco);border-radius:10px;border:1px solid var(--borda);padding:12px 14px;display:flex;align-items:center;gap:12px}
+.lanc-item.recorrente-item{border-left:3px solid var(--roxo)}
 .lanc-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .lanc-icon.despesa{background:var(--vm-light)}
 .lanc-icon.receita{background:var(--vd-light)}
@@ -80,12 +74,15 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .tag.individual{background:#fee2e2;color:#991b1b}
 .tag.d15{background:#dbeafe;color:#1e40af}
 .tag.d30{background:#f3e8ff;color:#6b21a8}
+.tag.recorrente{background:#ede9fe;color:#5b21b6}
 .lanc-valor{font-size:15px;font-weight:700;flex-shrink:0}
 .lanc-valor.despesa{color:var(--vm)}
 .lanc-valor.receita{color:var(--vd)}
 .lanc-actions{display:flex;gap:4px;flex-shrink:0}
 .btn-icon{background:none;border:none;cursor:pointer;color:var(--txt3);padding:4px;border-radius:6px;font-size:14px}
 .btn-icon:hover{background:var(--bg)}
+.btn-atualizar{background:var(--am-light);color:var(--am);border:1px solid var(--am);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-atualizar:hover{background:var(--am);color:#fff}
 .empty{text-align:center;padding:36px 20px;color:var(--txt3);font-size:14px}
 .empty-icon{font-size:38px;margin-bottom:8px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
@@ -118,6 +115,14 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .hist-hdr h4{font-size:14px;font-weight:600;color:var(--txt)}
 .hist-body{padding:2px 14px 10px}
 .badge-quem{font-size:10px;padding:2px 6px;border-radius:8px;background:#f3f4f6;color:var(--txt3)}
+.rec-card{background:var(--branco);border-radius:10px;border:1px solid var(--borda);border-left:3px solid var(--roxo);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.rec-info{flex:1;min-width:0}
+.rec-desc{font-size:13px;font-weight:500;color:var(--txt)}
+.rec-meta{font-size:11px;color:var(--txt3);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.rec-valor{font-size:14px;font-weight:700;flex-shrink:0}
+.rec-valor.despesa{color:var(--vm)}
+.rec-valor.receita{color:var(--vd)}
+.info-box{background:var(--az-light);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:13px;color:var(--az2);margin-bottom:16px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -126,11 +131,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <div class="setup-card">
     <div style="font-size:48px;margin-bottom:12px">💰</div>
     <h2>Finanças do Casal</h2>
-    <p>Configure uma vez. Cole as credenciais do Firebase para conectar os dois celulares em tempo real.</p>
+    <p>Configure uma vez. Cole as credenciais do Firebase para conectar os dois dispositivos em tempo real.</p>
     <div class="setup-steps">
       <div class="step"><div class="step-num">1</div><p>Acesse <code>console.firebase.google.com</code> → Criar projeto → ative o <strong>Realtime Database</strong> em modo teste</p></div>
       <div class="step"><div class="step-num">2</div><p>Configurações do projeto → Seus apps → Adicionar app Web → copie as configurações</p></div>
-      <div class="step"><div class="step-num">3</div><p>Cole os dados abaixo e clique em Conectar. Repita no celular da sua esposa com as mesmas credenciais</p></div>
+      <div class="step"><div class="step-num">3</div><p>Cole os dados abaixo e clique em Conectar. Repita no outro dispositivo com as mesmas credenciais</p></div>
     </div>
     <div class="config-form">
       <label>API Key</label><input id="cfgKey" placeholder="AIzaSy...">
@@ -156,6 +161,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <div class="nav-tabs">
     <button class="tab active" data-tab="visao" onclick="showTab(this)">📊 Visão Geral</button>
     <button class="tab" data-tab="lanc" onclick="showTab(this)">📝 Lançamentos</button>
+    <button class="tab" data-tab="recorrentes" onclick="showTab(this)">🔁 Recorrentes</button>
     <button class="tab" data-tab="hist" onclick="showTab(this)">📅 Histórico</button>
   </div>
 
@@ -202,6 +208,20 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
   </div>
 
+  <!-- RECORRENTES -->
+  <div class="tab-content" id="tab-recorrentes">
+    <div class="info-box">
+      🔁 <strong>Recorrentes aparecem automaticamente todo mês</strong> nos KPIs e nos fechamentos — sem você precisar lançar. As de valor variável ficam com um botão para atualizar o valor quando necessário.
+    </div>
+    <div class="section-hdr">
+      <h3>Despesas e receitas fixas</h3>
+      <button class="btn-add" onclick="abrirModalRec(null)">＋ Nova</button>
+    </div>
+    <div id="listaRec">
+      <div class="empty"><div class="empty-icon">🔁</div>Nenhuma recorrente cadastrada</div>
+    </div>
+  </div>
+
   <!-- HISTÓRICO -->
   <div class="tab-content" id="tab-hist">
     <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Histórico por mês</h3>
@@ -209,7 +229,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL LANÇAMENTO -->
 <div class="modal-overlay" id="overlay" onclick="if(event.target===this)fecharModal()">
   <div class="modal">
     <div class="modal-hdr">
@@ -223,10 +243,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <button class="type-btn rec" id="bRec" onclick="setTipo('receita')">💰 Receita</button>
       </div>
     </div>
-    <div class="form-group">
-      <label>Descrição</label>
-      <input id="mDesc" placeholder="Ex: Aluguel, Mercado, Salário...">
-    </div>
+    <div class="form-group"><label>Descrição</label><input id="mDesc" placeholder="Ex: Aluguel, Mercado, Salário..."></div>
     <div class="form-row">
       <div class="form-group"><label>Valor (R$)</label><input id="mValor" type="number" step="0.01" min="0" placeholder="0,00"></div>
       <div class="form-group"><label>Data</label><input id="mData" type="date"></div>
@@ -234,43 +251,34 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div class="form-group">
       <label>Categoria</label>
       <select id="mCat">
-        <option value="moradia">🏠 Moradia</option>
-        <option value="alimentacao">🍽️ Alimentação</option>
-        <option value="transporte">🚗 Transporte</option>
-        <option value="saude">❤️ Saúde</option>
-        <option value="educacao">📚 Educação</option>
-        <option value="lazer">🎉 Lazer</option>
-        <option value="streaming">📺 Streaming</option>
-        <option value="vestuario">👕 Vestuário</option>
-        <option value="salario">💼 Salário</option>
-        <option value="outros">📦 Outros</option>
+        <option value="moradia">🏠 Moradia</option><option value="alimentacao">🍽️ Alimentação</option>
+        <option value="transporte">🚗 Transporte</option><option value="saude">❤️ Saúde</option>
+        <option value="educacao">📚 Educação</option><option value="lazer">🎉 Lazer</option>
+        <option value="streaming">📺 Streaming</option><option value="vestuario">👕 Vestuário</option>
+        <option value="salario">💼 Salário</option><option value="outros">📦 Outros</option>
       </select>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Natureza</label>
+      <div class="form-group"><label>Natureza</label>
         <div class="pill-selector" id="pNat">
           <button class="pill-btn on" onclick="setPill('nat','fixo',this)">🔒 Fixo</button>
           <button class="pill-btn" onclick="setPill('nat','variavel',this)">🔀 Variável</button>
         </div>
       </div>
-      <div class="form-group">
-        <label>Responsável</label>
+      <div class="form-group"><label>Responsável</label>
         <div class="pill-selector" id="pQuem">
           <button class="pill-btn on" onclick="setPill('quem','conjunto',this)">👫 Conjunto</button>
           <button class="pill-btn" onclick="setPill('quem','individual',this)">👤 Individual</button>
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label>Fechamento</label>
+    <div class="form-group"><label>Fechamento</label>
       <div class="pill-selector" id="pFech">
         <button class="pill-btn on" onclick="setPill('fech','15',this)">📅 Dia 15</button>
         <button class="pill-btn" onclick="setPill('fech','30',this)">📅 Dia 30</button>
       </div>
     </div>
-    <div class="form-group" id="grpPago">
-      <label>Situação</label>
+    <div class="form-group" id="grpPago"><label>Situação</label>
       <div class="pill-selector" id="pPago">
         <button class="pill-btn on" onclick="setPill('pago','sim',this)">✅ Pago</button>
         <button class="pill-btn" onclick="setPill('pago','nao',this)">⏳ Pendente</button>
@@ -278,6 +286,72 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
     <input type="hidden" id="mId">
     <button class="btn-salvar" onclick="salvar()">💾 Salvar</button>
+  </div>
+</div>
+
+<!-- MODAL RECORRENTE -->
+<div class="modal-overlay" id="overlayRec" onclick="if(event.target===this)fecharModalRec()">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="rTitulo">Nova Recorrente</h3>
+      <button class="btn-close" onclick="fecharModalRec()">✕</button>
+    </div>
+    <div class="form-group"><label>Tipo</label>
+      <div class="type-selector">
+        <button class="type-btn active desp" id="rBDesp" onclick="setTipoRec('despesa')">💸 Despesa</button>
+        <button class="type-btn rec" id="rBRec" onclick="setTipoRec('receita')">💰 Receita</button>
+      </div>
+    </div>
+    <div class="form-group"><label>Descrição</label><input id="rDesc" placeholder="Ex: Aluguel, Salário, Netflix..."></div>
+    <div class="form-row">
+      <div class="form-group"><label>Valor (R$)</label><input id="rValor" type="number" step="0.01" min="0" placeholder="0,00"></div>
+      <div class="form-group"><label>Dia do vencimento</label><input id="rDia" type="number" min="1" max="31" placeholder="Ex: 5"></div>
+    </div>
+    <div class="form-group"><label>Categoria</label>
+      <select id="rCat">
+        <option value="moradia">🏠 Moradia</option><option value="alimentacao">🍽️ Alimentação</option>
+        <option value="transporte">🚗 Transporte</option><option value="saude">❤️ Saúde</option>
+        <option value="educacao">📚 Educação</option><option value="lazer">🎉 Lazer</option>
+        <option value="streaming">📺 Streaming</option><option value="vestuario">👕 Vestuário</option>
+        <option value="salario">💼 Salário</option><option value="outros">📦 Outros</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Valor</label>
+      <div class="pill-selector" id="rPNat">
+        <button class="pill-btn on" onclick="setPillRec('nat','fixo',this)">🔒 Valor fixo</button>
+        <button class="pill-btn" onclick="setPillRec('nat','variavel',this)">🔀 Valor variável</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Responsável</label>
+        <div class="pill-selector" id="rPQuem">
+          <button class="pill-btn on" onclick="setPillRec('quem','conjunto',this)">👫 Conjunto</button>
+          <button class="pill-btn" onclick="setPillRec('quem','individual',this)">👤 Individual</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Fechamento</label>
+        <div class="pill-selector" id="rPFech">
+          <button class="pill-btn on" onclick="setPillRec('fech','15',this)">📅 Dia 15</button>
+          <button class="pill-btn" onclick="setPillRec('fech','30',this)">📅 Dia 30</button>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" id="rId">
+    <button class="btn-salvar" onclick="salvarRec()">💾 Salvar</button>
+  </div>
+</div>
+
+<!-- MODAL ATUALIZAR VALOR VARIÁVEL -->
+<div class="modal-overlay" id="overlayVal" onclick="if(event.target===this)fecharModalVal()">
+  <div class="modal" style="max-height:300px">
+    <div class="modal-hdr">
+      <h3 id="vTitulo">Atualizar valor</h3>
+      <button class="btn-close" onclick="fecharModalVal()">✕</button>
+    </div>
+    <div class="form-group"><label>Novo valor para este mês (R$)</label><input id="vValor" type="number" step="0.01" min="0" placeholder="0,00"></div>
+    <input type="hidden" id="vRecId">
+    <input type="hidden" id="vMes">
+    <button class="btn-salvar" onclick="salvarValorVariavel()">💾 Confirmar</button>
   </div>
 </div>
 
@@ -291,7 +365,12 @@ const R=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
 const mkMes=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 const lbMes=d=>`${MESES[d.getMonth()]} ${d.getFullYear()}`;
 
-let db,dbRef,dados={},mesAtual=new Date(),tipo='despesa',pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'},nome='';
+let db,dbRef,recRef,valRef;
+let dados={},recorrentes={},valoresVariaveis={};
+let mesAtual=new Date(),tipo='despesa',tipoRec='despesa';
+let pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'};
+let pillsRec={nat:'fixo',quem:'conjunto',fech:'15'};
+let nome='';
 
 window.conectar=function(){
   const cfg={apiKey:document.getElementById('cfgKey').value.trim(),authDomain:document.getElementById('cfgAuth').value.trim(),databaseURL:document.getElementById('cfgDb').value.trim(),projectId:document.getElementById('cfgPrj').value.trim()};
@@ -302,12 +381,42 @@ window.conectar=function(){
 };
 
 function init(cfg){
-  const app=initializeApp(cfg);db=getDatabase(app);dbRef=ref(db,'lancamentos');
+  const app=initializeApp(cfg);db=getDatabase(app);
+  dbRef=ref(db,'lancamentos');
+  recRef=ref(db,'recorrentes');
+  valRef=ref(db,'valores_variaveis');
   document.getElementById('setupScreen').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('lblUser').textContent='👤 '+nome;
   document.getElementById('mData').value=new Date().toISOString().split('T')[0];
   onValue(dbRef,s=>{dados=s.val()||{};render();});
+  onValue(recRef,s=>{recorrentes=s.val()||{};render();});
+  onValue(valRef,s=>{valoresVariaveis=s.val()||{};render();});
+}
+
+// Retorna o valor de uma recorrente para um mês específico
+// Se variável e tem override para o mês, usa o override; senão usa o valor padrão
+function getValorRec(rec, mk){
+  if(rec.nat==='variavel'){
+    const override=valoresVariaveis[rec.id]?.[mk];
+    return override!==undefined?override:rec.valor;
+  }
+  return rec.valor;
+}
+
+// Monta lista de itens do mês (lançamentos manuais + recorrentes automáticas)
+function getItensMes(mk){
+  // lançamentos manuais
+  const manuais=Object.entries(dados).filter(([,v])=>v.mes===mk).map(([k,v])=>({...v,id:k,isRec:false}));
+  // recorrentes (aparecem em todo mês a partir do cadastro)
+  const recs=Object.entries(recorrentes).map(([k,v])=>{
+    const valor=getValorRec({...v,id:k},mk);
+    // data = mk + dia do vencimento
+    const dia=String(v.dia||1).padStart(2,'0');
+    const data=`${mk}-${dia}`;
+    return {...v,id:k,valor,data,mes:mk,isRec:true,recId:k};
+  });
+  return [...manuais,...recs].sort((a,b)=>b.data.localeCompare(a.data));
 }
 
 window.showTab=function(btn){
@@ -324,52 +433,87 @@ function render(){
   const mk=mkMes(mesAtual),lb=lbMes(mesAtual);
   ['lblMes1','lblMes2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=lb;});
   document.getElementById('tbSub').textContent=lb;
-  const itens=Object.entries(dados).filter(([,v])=>v.mes===mk).map(([k,v])=>({...v,id:k})).sort((a,b)=>b.data.localeCompare(a.data));
+  const itens=getItensMes(mk);
+
   // KPIs
   const rec=itens.filter(i=>i.tipo==='receita').reduce((s,i)=>s+i.valor,0);
   const desp=itens.filter(i=>i.tipo==='despesa').reduce((s,i)=>s+i.valor,0);
-  const pend=itens.filter(i=>i.tipo==='despesa'&&i.pago==='nao').reduce((s,i)=>s+i.valor,0);
+  const pend=itens.filter(i=>i.tipo==='despesa'&&i.pago==='nao'&&!i.isRec).reduce((s,i)=>s+i.valor,0);
   const saldo=rec-desp;
   document.getElementById('kRec').textContent=R(rec);
   document.getElementById('kDesp').textContent=R(desp);
   document.getElementById('kSaldo').textContent=R(saldo);
   document.getElementById('kSaldo').style.color=saldo>=0?'var(--vd)':'var(--vm)';
   document.getElementById('kPend').textContent=R(pend);
+
   // Fechamentos
   ['15','30'].forEach(d=>{
     const lista=itens.filter(i=>i.tipo==='despesa'&&i.fech===d);
     const tot=lista.reduce((s,i)=>s+i.valor,0);
     document.getElementById('t'+d).textContent=R(tot);
     const el=document.getElementById('f'+d);
-    el.innerHTML=lista.length?lista.map(i=>`<div class="fech-row"><span>${ICONS[i.categoria]||'📦'} ${i.desc}</span><span style="color:${i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span></div>`).join(''):'<div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div>';
+    el.innerHTML=lista.length?lista.map(i=>`<div class="fech-row">
+      <span>${ICONS[i.categoria]||'📦'} ${i.desc}${i.isRec?' 🔁':''}</span>
+      <span style="color:${i.isRec?'var(--roxo)':i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span>
+    </div>`).join(''):'<div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div>';
   });
-  // Lista lançamentos
+
+  // Lista lançamentos (manuais + recorrentes)
   const ll=document.getElementById('listaLanc');
-  ll.innerHTML=itens.length?itens.map(i=>`<div class="lanc-item">
+  ll.innerHTML=itens.length?itens.map(i=>`<div class="lanc-item${i.isRec?' recorrente-item':''}">
     <div class="lanc-icon ${i.tipo}">${i.tipo==='receita'?'💰':'💸'}</div>
     <div class="lanc-info">
       <div class="lanc-desc">${ICONS[i.categoria]||'📦'} ${i.desc}</div>
       <div class="lanc-meta">
         <span>${i.data}</span>
-        <span class="tag ${i.nat||i.natureza}">${(i.nat||i.natureza)==='fixo'?'Fixo':'Variável'}</span>
+        ${i.isRec?'<span class="tag recorrente">🔁 Recorrente</span>':''}
+        ${i.isRec&&i.nat==='variavel'?`<button class="btn-atualizar" onclick="abrirModalVal('${i.recId}','${mk}',${i.valor},'${i.desc}')">✏️ Atualizar valor</button>`:''}
+        ${!i.isRec?`<span class="tag ${i.nat||i.natureza}">${(i.nat||i.natureza)==='fixo'?'Fixo':'Variável'}</span>`:''}
         <span class="tag ${i.quem}">${i.quem==='conjunto'?'👫 Conjunto':'👤 Individual'}</span>
         <span class="tag d${i.fech}">Dia ${i.fech}</span>
-        ${i.tipo==='despesa'?`<span style="color:${i.pago==='sim'?'var(--vd)':'var(--am)'};font-size:10px">${i.pago==='sim'?'✅':'⏳'}</span>`:''}
-        <span class="badge-quem">${i.quem_nome||'?'}</span>
+        ${(!i.isRec&&i.tipo==='despesa')?`<span style="color:${i.pago==='sim'?'var(--vd)':'var(--am)'};font-size:10px">${i.pago==='sim'?'✅':'⏳'}</span>`:''}
+        ${!i.isRec?`<span class="badge-quem">${i.quem_nome||'?'}</span>`:''}
       </div>
     </div>
     <div class="lanc-valor ${i.tipo}">${i.tipo==='despesa'?'- ':'+ '}${R(i.valor)}</div>
     <div class="lanc-actions">
-      <button class="btn-icon" onclick="editarItem('${i.id}')">✏️</button>
-      <button class="btn-icon" onclick="excluirItem('${i.id}')">🗑️</button>
+      ${i.isRec?`<button class="btn-icon" onclick="showTab(document.querySelector('[data-tab=recorrentes]'))" title="Ver recorrentes">🔁</button>`:
+        `<button class="btn-icon" onclick="editarItem('${i.id}')">✏️</button>
+         <button class="btn-icon" onclick="excluirItem('${i.id}')">🗑️</button>`}
     </div>
   </div>`).join(''):'<div class="empty"><div class="empty-icon">📋</div>Nenhum lançamento neste mês</div>';
+
+  // Lista recorrentes
+  const lr=document.getElementById('listaRec');
+  const recList=Object.entries(recorrentes);
+  lr.innerHTML=recList.length?recList.map(([k,i])=>`<div class="rec-card">
+    <div class="lanc-icon ${i.tipo}">${i.tipo==='receita'?'💰':'💸'}</div>
+    <div class="rec-info">
+      <div class="rec-desc">${ICONS[i.categoria]||'📦'} ${i.desc}</div>
+      <div class="rec-meta">
+        <span>Vence dia ${i.dia||'?'}</span>
+        <span class="tag fixo">${i.nat==='fixo'?'🔒 Valor fixo':'🔀 Valor variável'}</span>
+        <span class="tag ${i.quem}">${i.quem==='conjunto'?'👫 Conjunto':'👤 Individual'}</span>
+        <span class="tag d${i.fech}">Dia ${i.fech}</span>
+      </div>
+    </div>
+    <div class="rec-valor ${i.tipo}">${R(i.valor)}</div>
+    <div class="lanc-actions">
+      <button class="btn-icon" onclick="editarRec('${k}')">✏️</button>
+      <button class="btn-icon" onclick="excluirRec('${k}')">🗑️</button>
+    </div>
+  </div>`).join(''):'<div class="empty"><div class="empty-icon">🔁</div>Nenhuma recorrente cadastrada<br><small style="font-size:12px;color:var(--txt3);margin-top:4px;display:block">Clique em + Nova para adicionar aluguel, salário, etc.</small></div>';
+
   // Histórico
-  const meses=[...new Set(Object.values(dados).map(v=>v.mes))].sort().reverse();
+  const todosItens=[];
+  const mks=[...new Set([
+    ...Object.values(dados).map(v=>v.mes),
+    ...Object.keys(recorrentes).length?[mkMes(new Date())]:[]
+  ])].sort().reverse();
   const lh=document.getElementById('listaHist');
-  lh.innerHTML=meses.length?meses.map(mk2=>{
+  lh.innerHTML=mks.length?mks.map(mk2=>{
     const [ano,m]=mk2.split('-');
-    const its=Object.values(dados).filter(v=>v.mes===mk2);
+    const its=getItensMes(mk2);
     const r2=its.filter(i=>i.tipo==='receita').reduce((s,i)=>s+i.valor,0);
     const d2=its.filter(i=>i.tipo==='despesa').reduce((s,i)=>s+i.valor,0);
     const s2=r2-d2;
@@ -377,55 +521,20 @@ function render(){
   }).join(''):'<div class="empty"><div class="empty-icon">📅</div>Sem histórico ainda</div>';
 }
 
+// ── MODAL LANÇAMENTO ─────────────────────────────
 window.abrirModal=function(id){
   document.getElementById('mId').value=id||'';
   document.getElementById('mTitulo').textContent=id?'Editar Lançamento':'Novo Lançamento';
-  if(id){
-    const i=dados[id];
-    document.getElementById('mDesc').value=i.desc;
-    document.getElementById('mValor').value=i.valor;
-    document.getElementById('mData').value=i.data;
-    document.getElementById('mCat').value=i.categoria;
-    setTipo(i.tipo);
-    pills={nat:i.nat||i.natureza||'fixo',quem:i.quem||'conjunto',fech:i.fech||'15',pago:i.pago||'sim'};
-  } else {
-    document.getElementById('mDesc').value='';
-    document.getElementById('mValor').value='';
-    document.getElementById('mData').value=new Date().toISOString().split('T')[0];
-    document.getElementById('mCat').value='moradia';
-    setTipo('despesa');
-    pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'};
-  }
-  syncPills();
-  document.getElementById('overlay').classList.add('open');
+  if(id){const i=dados[id];document.getElementById('mDesc').value=i.desc;document.getElementById('mValor').value=i.valor;document.getElementById('mData').value=i.data;document.getElementById('mCat').value=i.categoria;setTipo(i.tipo);pills={nat:i.nat||i.natureza||'fixo',quem:i.quem||'conjunto',fech:i.fech||'15',pago:i.pago||'sim'};}
+  else{document.getElementById('mDesc').value='';document.getElementById('mValor').value='';document.getElementById('mData').value=new Date().toISOString().split('T')[0];document.getElementById('mCat').value='moradia';setTipo('despesa');pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'};}
+  syncPills();document.getElementById('overlay').classList.add('open');
 };
-
-function syncPills(){
-  [['pNat','nat'],['pQuem','quem'],['pFech','fech'],['pPago','pago']].forEach(([pid,key])=>{
-    document.getElementById(pid).querySelectorAll('.pill-btn').forEach(b=>{
-      const m=b.getAttribute('onclick').match(/'([^']+)'\s*,this/);
-      if(m)b.classList.toggle('on',m[1]===pills[key]);
-    });
-  });
-}
-
+function syncPills(){[['pNat','nat'],['pQuem','quem'],['pFech','fech'],['pPago','pago']].forEach(([pid,key])=>{document.getElementById(pid).querySelectorAll('.pill-btn').forEach(b=>{const m=b.getAttribute('onclick').match(/'([^']+)'\s*,this/);if(m)b.classList.toggle('on',m[1]===pills[key]);});});}
 window.fecharModal=function(){document.getElementById('overlay').classList.remove('open');};
-window.setTipo=function(t){
-  tipo=t;
-  document.getElementById('bDesp').className='type-btn'+(t==='despesa'?' active desp':' desp');
-  document.getElementById('bRec').className='type-btn'+(t==='receita'?' active rec':' rec');
-  document.getElementById('grpPago').style.display=t==='despesa'?'':'none';
-};
-window.setPill=function(grupo,val,btn){
-  pills[grupo]=val;
-  btn.closest('.pill-selector').querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-};
-
+window.setTipo=function(t){tipo=t;document.getElementById('bDesp').className='type-btn'+(t==='despesa'?' active desp':' desp');document.getElementById('bRec').className='type-btn'+(t==='receita'?' active rec':' rec');document.getElementById('grpPago').style.display=t==='despesa'?'':'none';};
+window.setPill=function(grupo,val,btn){pills[grupo]=val;btn.closest('.pill-selector').querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
 window.salvar=async function(){
-  const desc=document.getElementById('mDesc').value.trim();
-  const valor=parseFloat(document.getElementById('mValor').value);
-  const data=document.getElementById('mData').value;
+  const desc=document.getElementById('mDesc').value.trim();const valor=parseFloat(document.getElementById('mValor').value);const data=document.getElementById('mData').value;
   if(!desc||!valor||isNaN(valor)||!data){alert('Preencha descrição, valor e data');return;}
   const item={tipo,desc,valor,data,mes:data.substring(0,7),categoria:document.getElementById('mCat').value,nat:pills.nat,natureza:pills.nat,quem:pills.quem,fech:pills.fech,pago:tipo==='receita'?'sim':pills.pago,quem_nome:nome,ts:Date.now()};
   const eid=document.getElementById('mId').value;
@@ -435,15 +544,53 @@ window.salvar=async function(){
 window.excluirItem=function(id){if(confirm('Excluir este lançamento?'))remove(ref(db,'lancamentos/'+id));};
 window.editarItem=function(id){abrirModal(id);};
 
-// Auto-iniciar se já configurado
+// ── MODAL RECORRENTE ─────────────────────────────
+window.abrirModalRec=function(id){
+  document.getElementById('rId').value=id||'';
+  document.getElementById('rTitulo').textContent=id?'Editar Recorrente':'Nova Recorrente';
+  if(id){const i=recorrentes[id];document.getElementById('rDesc').value=i.desc;document.getElementById('rValor').value=i.valor;document.getElementById('rDia').value=i.dia||1;document.getElementById('rCat').value=i.categoria;setTipoRec(i.tipo);pillsRec={nat:i.nat||'fixo',quem:i.quem||'conjunto',fech:i.fech||'15'};}
+  else{document.getElementById('rDesc').value='';document.getElementById('rValor').value='';document.getElementById('rDia').value='';document.getElementById('rCat').value='moradia';setTipoRec('despesa');pillsRec={nat:'fixo',quem:'conjunto',fech:'15'};}
+  syncPillsRec();document.getElementById('overlayRec').classList.add('open');
+};
+function syncPillsRec(){[['rPNat','nat'],['rPQuem','quem'],['rPFech','fech']].forEach(([pid,key])=>{document.getElementById(pid).querySelectorAll('.pill-btn').forEach(b=>{const m=b.getAttribute('onclick').match(/'([^']+)'\s*,this/);if(m)b.classList.toggle('on',m[1]===pillsRec[key]);});});}
+window.fecharModalRec=function(){document.getElementById('overlayRec').classList.remove('open');};
+window.setTipoRec=function(t){tipoRec=t;document.getElementById('rBDesp').className='type-btn'+(t==='despesa'?' active desp':' desp');document.getElementById('rBRec').className='type-btn'+(t==='receita'?' active rec':' rec');};
+window.setPillRec=function(grupo,val,btn){pillsRec[grupo]=val;btn.closest('.pill-selector').querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
+window.salvarRec=async function(){
+  const desc=document.getElementById('rDesc').value.trim();const valor=parseFloat(document.getElementById('rValor').value);const dia=parseInt(document.getElementById('rDia').value);
+  if(!desc||!valor||isNaN(valor)||!dia){alert('Preencha todos os campos');return;}
+  const item={tipo:tipoRec,desc,valor,dia,categoria:document.getElementById('rCat').value,nat:pillsRec.nat,quem:pillsRec.quem,fech:pillsRec.fech,quem_nome:nome,ts:Date.now()};
+  const eid=document.getElementById('rId').value;
+  if(eid){await set(ref(db,'recorrentes/'+eid),item);}else{await push(recRef,item);}
+  fecharModalRec();
+};
+window.editarRec=function(id){abrirModalRec(id);};
+window.excluirRec=function(id){if(confirm('Excluir esta recorrente? Ela deixará de aparecer em todos os meses.'))remove(ref(db,'recorrentes/'+id));};
+
+// ── MODAL VALOR VARIÁVEL ─────────────────────────
+window.abrirModalVal=function(recId,mes,valorAtual,desc){
+  document.getElementById('vRecId').value=recId;
+  document.getElementById('vMes').value=mes;
+  document.getElementById('vValor').value=valorAtual;
+  document.getElementById('vTitulo').textContent='Atualizar: '+desc;
+  document.getElementById('overlayVal').classList.add('open');
+};
+window.fecharModalVal=function(){document.getElementById('overlayVal').classList.remove('open');};
+window.salvarValorVariavel=async function(){
+  const recId=document.getElementById('vRecId').value;
+  const mes=document.getElementById('vMes').value;
+  const valor=parseFloat(document.getElementById('vValor').value);
+  if(!valor||isNaN(valor)){alert('Digite um valor válido');return;}
+  await set(ref(db,`valores_variaveis/${recId}/${mes}`),valor);
+  fecharModalVal();
+};
+
+// ── AUTO-INICIAR ─────────────────────────────────
 const s=localStorage.getItem('fcfg');
 if(s){
   nome=localStorage.getItem('fnome')||'Usuário';
   const cfg=JSON.parse(s);
-  ['cfgKey','cfgAuth','cfgDb','cfgPrj'].forEach((id,i)=>{
-    const vals=[cfg.apiKey,cfg.authDomain,cfg.databaseURL,cfg.projectId];
-    document.getElementById(id).value=vals[i]||'';
-  });
+  ['cfgKey','cfgAuth','cfgDb','cfgPrj'].forEach((id,i)=>{const vals=[cfg.apiKey,cfg.authDomain,cfg.databaseURL,cfg.projectId];document.getElementById(id).value=vals[i]||'';});
   document.getElementById('cfgNome').value=nome;
   init(cfg);
 }
