@@ -365,8 +365,8 @@ const R=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
 const mkMes=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 const lbMes=d=>`${MESES[d.getMonth()]} ${d.getFullYear()}`;
 
-let db,dbRef,recRef,valRef;
-let dados={},recorrentes={},valoresVariaveis={};
+let db,dbRef,recRef,valRef,pagRef;
+let dados={},recorrentes={},valoresVariaveis={},pagamentosRec={};
 let mesAtual=new Date(),tipo='despesa',tipoRec='despesa';
 let pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'};
 let pillsRec={nat:'fixo',quem:'conjunto',fech:'15'};
@@ -385,6 +385,7 @@ function init(cfg){
   dbRef=ref(db,'lancamentos');
   recRef=ref(db,'recorrentes');
   valRef=ref(db,'valores_variaveis');
+  pagRef=ref(db,'pagamentos_rec');
   document.getElementById('setupScreen').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('lblUser').textContent='👤 '+nome;
@@ -392,6 +393,7 @@ function init(cfg){
   onValue(dbRef,s=>{dados=s.val()||{};render();});
   onValue(recRef,s=>{recorrentes=s.val()||{};render();});
   onValue(valRef,s=>{valoresVariaveis=s.val()||{};render();});
+  onValue(pagRef,s=>{pagamentosRec=s.val()||{};render();});
 }
 
 // Retorna o valor de uma recorrente para um mês específico
@@ -404,17 +406,19 @@ function getValorRec(rec, mk){
   return rec.valor;
 }
 
+function getPagoRec(recId, mk){
+  return pagamentosRec[recId]?.[mk] ?? 'nao';
+}
+
 // Monta lista de itens do mês (lançamentos manuais + recorrentes automáticas)
 function getItensMes(mk){
-  // lançamentos manuais
   const manuais=Object.entries(dados).filter(([,v])=>v.mes===mk).map(([k,v])=>({...v,id:k,isRec:false}));
-  // recorrentes (aparecem em todo mês a partir do cadastro)
   const recs=Object.entries(recorrentes).map(([k,v])=>{
     const valor=getValorRec({...v,id:k},mk);
-    // data = mk + dia do vencimento
+    const pago=getPagoRec(k,mk);
     const dia=String(v.dia||1).padStart(2,'0');
     const data=`${mk}-${dia}`;
-    return {...v,id:k,valor,data,mes:mk,isRec:true,recId:k};
+    return {...v,id:k,valor,pago,data,mes:mk,isRec:true,recId:k};
   });
   return [...manuais,...recs].sort((a,b)=>b.data.localeCompare(a.data));
 }
@@ -438,7 +442,7 @@ function render(){
   // KPIs
   const rec=itens.filter(i=>i.tipo==='receita').reduce((s,i)=>s+i.valor,0);
   const desp=itens.filter(i=>i.tipo==='despesa').reduce((s,i)=>s+i.valor,0);
-  const pend=itens.filter(i=>i.tipo==='despesa'&&i.pago==='nao'&&!i.isRec).reduce((s,i)=>s+i.valor,0);
+  const pend=itens.filter(i=>i.tipo==='despesa'&&i.pago==='nao').reduce((s,i)=>s+i.valor,0);
   const saldo=rec-desp;
   document.getElementById('kRec').textContent=R(rec);
   document.getElementById('kDesp').textContent=R(desp);
@@ -454,7 +458,7 @@ function render(){
     const el=document.getElementById('f'+d);
     el.innerHTML=lista.length?lista.map(i=>`<div class="fech-row">
       <span>${ICONS[i.categoria]||'📦'} ${i.desc}${i.isRec?' 🔁':''}</span>
-      <span style="color:${i.isRec?'var(--roxo)':i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span>
+      <span style="color:${i.isRec?(i.pago==='sim'?'var(--vd)':'var(--am)'):i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span>
     </div>`).join(''):'<div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div>';
   });
 
@@ -467,7 +471,8 @@ function render(){
       <div class="lanc-meta">
         <span>${i.data}</span>
         ${i.isRec?'<span class="tag recorrente">🔁 Recorrente</span>':''}
-        ${i.isRec&&i.nat==='variavel'?`<button class="btn-atualizar" onclick="abrirModalVal('${i.recId}','${mk}',${i.valor},'${i.desc}')">✏️ Atualizar valor</button>`:''}
+        ${i.isRec&&i.nat==='variavel'?`<button class="btn-atualizar" onclick="abrirModalVal('${i.recId}','${mk}',${i.valor},'${i.desc}')">✏️ Valor</button>`:''}
+        ${i.isRec&&i.tipo==='despesa'?`<button class="btn-atualizar" style="background:${i.pago==='sim'?'#d1fae5':'#fee2e2'};color:${i.pago==='sim'?'#065f46':'#991b1b'};border-color:${i.pago==='sim'?'#6ee7b7':'#fca5a5'}" onclick="togglePagoRec('${i.recId}','${mk}','${i.pago}')">${i.pago==='sim'?'✅ Pago':'⏳ Pendente'}</button>`:''}
         ${!i.isRec?`<span class="tag ${i.nat||i.natureza}">${(i.nat||i.natureza)==='fixo'?'Fixo':'Variável'}</span>`:''}
         <span class="tag ${i.quem}">${i.quem==='conjunto'?'👫 Conjunto':'👤 Individual'}</span>
         <span class="tag d${i.fech}">Dia ${i.fech}</span>
@@ -583,6 +588,11 @@ window.salvarValorVariavel=async function(){
   if(!valor||isNaN(valor)){alert('Digite um valor válido');return;}
   await set(ref(db,`valores_variaveis/${recId}/${mes}`),valor);
   fecharModalVal();
+};
+
+window.togglePagoRec=async function(recId,mes,pagoAtual){
+  const novoPago = pagoAtual==='sim'?'nao':'sim';
+  await set(ref(db,`pagamentos_rec/${recId}/${mes}`),novoPago);
 };
 
 // ── AUTO-INICIAR ─────────────────────────────────
