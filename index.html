@@ -2,726 +2,701 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Finanças">
-<meta name="theme-color" content="#1a56db">
-<link rel="apple-touch-icon" href="icon-192.svg">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Finanças do Casal</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a56db">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--az:#1a56db;--az2:#1e429f;--az-light:#ebf5ff;--vd:#057a55;--vd-light:#f3faf7;--vm:#e02424;--vm-light:#fdf2f2;--am:#ff8c00;--am-light:#fffbeb;--roxo:#7e3af2;--borda:#e5e7eb;--bg:#f9fafb;--branco:#fff;--txt:#111827;--txt2:#374151;--txt3:#6b7280;}
-body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
-.topbar{background:linear-gradient(135deg,#1e3a8a,#1a56db);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.topbar-left{display:flex;align-items:center;gap:10px}
-.tb-title{color:#fff;font-size:16px;font-weight:700}
-.tb-sub{color:#93c5fd;font-size:12px}
-.user-badge{background:rgba(255,255,255,.15);color:#fff;font-size:12px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:6px;cursor:pointer;border:none}
-.user-badge:hover{background:rgba(255,255,255,.25)}
-#setupScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.setup-card{background:var(--branco);border-radius:16px;padding:36px 32px;max-width:460px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.1);text-align:center}
-.setup-card h2{font-size:22px;color:var(--az2);margin-bottom:8px}
-.setup-card p{color:var(--txt3);font-size:14px;margin-bottom:24px;line-height:1.5}
-.setup-steps{text-align:left;margin-bottom:24px}
-.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
-.step-num{background:var(--az);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
-.step p{font-size:13px;color:var(--txt2);line-height:1.5}
-.step code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:12px;color:var(--az2)}
-.config-form{background:#f8fafc;border-radius:10px;padding:16px;margin-bottom:20px;text-align:left}
-.config-form label{font-size:12px;font-weight:600;color:var(--txt3);display:block;margin-bottom:4px;margin-top:10px}
-.config-form label:first-child{margin-top:0}
-.config-form input{width:100%;padding:8px 10px;border:1.5px solid var(--borda);border-radius:8px;font-size:13px;color:var(--txt)}
-.config-form input:focus{outline:none;border-color:var(--az)}
-.btn-primary{background:var(--az);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%}
-.btn-primary:hover{background:var(--az2)}
-.setup-note{font-size:11px;color:var(--txt3);margin-top:12px}
-#app{display:none}
-.nav-tabs{background:var(--branco);border-bottom:1px solid var(--borda);display:flex;overflow-x:auto;padding:0 16px;gap:4px;scrollbar-width:none}
-.nav-tabs::-webkit-scrollbar{display:none}
-.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none}
-.tab.active{color:var(--az);border-bottom-color:var(--az);font-weight:600}
-.tab-content{display:none;padding:16px}
-.tab-content.active{display:block}
-.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-@media(min-width:600px){.kpi-grid{grid-template-columns:repeat(4,1fr)}}
-.kpi{background:var(--branco);border-radius:12px;padding:14px;border:1px solid var(--borda)}
-.kpi .lbl{font-size:11px;color:var(--txt3);margin-bottom:4px;font-weight:500}
-.kpi .val{font-size:20px;font-weight:700;color:var(--txt)}
-.kpi .sub{font-size:11px;color:var(--txt3);margin-top:2px}
-.fechamento-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-@media(max-width:500px){.fechamento-grid{grid-template-columns:1fr}}
-.fech-card{background:var(--branco);border-radius:12px;border:1px solid var(--borda);overflow:hidden}
-.fech-hdr{padding:10px 14px;font-size:13px;font-weight:600;color:#fff}
-.fech-hdr.d15{background:#1e3a8a}
-.fech-hdr.d30{background:#7e3af2}
-.fech-body{padding:12px 14px}
-.fech-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
-.fech-row:last-child{border:none}
-.fech-total{display:flex;justify-content:space-between;padding:8px 14px;font-size:13px;font-weight:700;border-top:1px solid var(--borda);background:#f8fafc}
-.fech-toggle{display:flex;justify-content:center;align-items:center;gap:6px;padding:8px;font-size:12px;font-weight:600;color:var(--az);cursor:pointer;border-top:1px solid var(--borda);background:#f8fafc;user-select:none}
-.fech-toggle:hover{background:#ebf5ff}
-.fech-saldo span:first-child{color:var(--txt2)}
-.fech-rec div.fech-row{padding:4px 14px;font-size:12px;border-bottom:1px solid #f3f4f6}
-.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.section-hdr h3{font-size:14px;font-weight:600;color:var(--txt)}
-.btn-add{background:var(--az);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px}
-.btn-add:hover{background:var(--az2)}
-.lancamentos-list{display:flex;flex-direction:column;gap:8px}
-.lanc-item{background:var(--branco);border-radius:10px;border:1px solid var(--borda);padding:12px 14px;display:flex;align-items:center;gap:12px}
-.lanc-item.recorrente-item{border-left:3px solid var(--roxo)}
-.lanc-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.lanc-icon.despesa{background:var(--vm-light)}
-.lanc-icon.receita{background:var(--vd-light)}
-.lanc-info{flex:1;min-width:0}
-.lanc-desc{font-size:13px;font-weight:500;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lanc-meta{font-size:11px;color:var(--txt3);margin-top:2px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-.tag{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500}
-.tag.fixo{background:#ede9fe;color:#5b21b6}
-.tag.variavel{background:#fef3c7;color:#92400e}
-.tag.conjunto{background:#d1fae5;color:#065f46}
-.tag.individual{background:#fee2e2;color:#991b1b}
-.tag.d15{background:#dbeafe;color:#1e40af}
-.tag.d30{background:#f3e8ff;color:#6b21a8}
-.tag.recorrente{background:#ede9fe;color:#5b21b6}
-.lanc-valor{font-size:15px;font-weight:700;flex-shrink:0}
-.lanc-valor.despesa{color:var(--vm)}
-.lanc-valor.receita{color:var(--vd)}
-.lanc-actions{display:flex;gap:4px;flex-shrink:0}
-.btn-icon{background:none;border:none;cursor:pointer;color:var(--txt3);padding:4px;border-radius:6px;font-size:14px}
-.btn-icon:hover{background:var(--bg)}
-.btn-atualizar{background:var(--am-light);color:var(--am);border:1px solid var(--am);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
-.btn-atualizar:hover{background:var(--am);color:#fff}
-.empty{text-align:center;padding:36px 20px;color:var(--txt3);font-size:14px}
-.empty-icon{font-size:38px;margin-bottom:8px}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
-@media(min-width:600px){.modal-overlay{align-items:center}}
-.modal-overlay.open{display:flex}
-.modal{background:var(--branco);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto}
-@media(min-width:600px){.modal{border-radius:16px}}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.modal-hdr h3{font-size:16px;font-weight:700;color:var(--txt)}
-.btn-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt3);padding:4px}
+:root{
+  --az:#1a56db;--az2:#1e40af;--vd:#16a34a;--vm:#dc2626;--am:#d97706;
+  --roxo:#7c3aed;--bg:#f1f5f9;--card:#fff;--txt:#1e293b;--txt2:#64748b;
+  --txt3:#94a3b8;--borda:#e2e8f0;--shadow:0 1px 3px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+/* ── AUTH SCREEN ── */
+#authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#1e3a8a 0%,#1a56db 50%,#3b82f6 100%)}
+.auth-card{background:#fff;border-radius:24px;padding:32px 28px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo .icon{font-size:48px;margin-bottom:8px}
+.auth-logo h1{font-size:22px;font-weight:700;color:var(--txt)}
+.auth-logo p{font-size:13px;color:var(--txt2);margin-top:4px}
+.auth-tabs{display:flex;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:20px;gap:4px}
+.auth-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:8px;font-size:13px;font-weight:600;color:var(--txt2);cursor:pointer;transition:.2s}
+.auth-tab.active{background:#fff;color:var(--az);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.auth-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;display:none}
 .form-group{margin-bottom:14px}
-.form-group label{font-size:12px;font-weight:600;color:var(--txt3);display:block;margin-bottom:5px}
-.form-group input,.form-group select{width:100%;padding:9px 12px;border:1.5px solid var(--borda);border-radius:8px;font-size:14px;color:var(--txt);background:var(--branco)}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--az)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.type-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.type-btn{padding:10px;border-radius:8px;border:2px solid var(--borda);background:var(--branco);cursor:pointer;font-size:13px;font-weight:500;color:var(--txt3);transition:all .15s}
-.type-btn.active.desp{border-color:var(--vm);background:var(--vm-light);color:var(--vm)}
-.type-btn.active.rec{border-color:var(--vd);background:var(--vd-light);color:var(--vd)}
-.pill-selector{display:flex;flex-wrap:wrap;gap:6px}
-.pill-btn{padding:6px 13px;border-radius:20px;border:1.5px solid var(--borda);background:var(--branco);cursor:pointer;font-size:12px;font-weight:500;color:var(--txt3)}
-.pill-btn.on{border-color:var(--az);background:var(--az-light);color:var(--az)}
-.btn-salvar{background:var(--az);color:#fff;border:none;padding:13px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-top:6px}
-.btn-salvar:hover{background:var(--az2)}
-.mes-nav{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--branco);padding:10px 14px;border-radius:10px;border:1px solid var(--borda)}
-.mes-nav button{background:none;border:none;cursor:pointer;color:var(--az);font-size:20px;padding:2px 8px;font-weight:700}
-.mes-nav span{flex:1;text-align:center;font-size:14px;font-weight:600;color:var(--txt)}
-.hist-card{background:var(--branco);border-radius:12px;border:1px solid var(--borda);margin-bottom:10px;overflow:hidden}
-.hist-hdr{padding:12px 14px;background:#f8fafc;display:flex;justify-content:space-between;align-items:center}
-.hist-hdr h4{font-size:14px;font-weight:600;color:var(--txt)}
-.hist-body{padding:2px 14px 10px}
-.badge-quem{font-size:10px;padding:2px 6px;border-radius:8px;background:#f3f4f6;color:var(--txt3)}
-.rec-card{background:var(--branco);border-radius:10px;border:1px solid var(--borda);border-left:3px solid var(--roxo);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.rec-info{flex:1;min-width:0}
-.rec-desc{font-size:13px;font-weight:500;color:var(--txt)}
-.rec-meta{font-size:11px;color:var(--txt3);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.rec-valor{font-size:14px;font-weight:700;flex-shrink:0}
-.rec-valor.despesa{color:var(--vm)}
-.rec-valor.receita{color:var(--vd)}
-.info-box{background:var(--az-light);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:13px;color:var(--az2);margin-bottom:16px;line-height:1.5}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--borda);border-radius:10px;font-size:15px;color:var(--txt);outline:none;transition:.2s;background:#fafafa}
+.form-group input:focus{border-color:var(--az);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+.btn-auth{width:100%;padding:14px;background:var(--az);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:.2s}
+.btn-auth:active{transform:scale(.98);background:var(--az2)}
+.auth-note{font-size:12px;color:var(--txt3);text-align:center;margin-top:12px}
+
+/* ── APP ── */
+#app{display:none;padding-bottom:80px}
+.topbar{position:sticky;top:0;z-index:100;background:var(--az);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{color:#fff;font-size:16px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-user{color:rgba(255,255,255,.8);font-size:12px}
+.btn-logout{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+
+/* ── NAVBAR ── */
+.navbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--borda);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;border:none;background:transparent;color:var(--txt3);font-size:10px;font-weight:600;cursor:pointer;gap:3px;transition:.15s}
+.nav-btn.active{color:var(--az)}
+.nav-btn svg{width:22px;height:22px}
+
+/* ── PAGES ── */
+.page{display:none;padding:16px}
+.page.active{display:block}
+
+/* ── KPIs ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.kpi{background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.kpi-lbl{font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-val{font-size:20px;font-weight:800;color:var(--txt)}
+.kpi-val.red{color:var(--vm)}
+.kpi-val.green{color:var(--vd)}
+.kpi-val.orange{color:var(--am)}
+
+/* ── MES SELECTOR ── */
+.mes-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:14px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.mes-bar button{background:none;border:none;font-size:20px;cursor:pointer;color:var(--az);padding:0 8px}
+.mes-label{font-size:15px;font-weight:700;color:var(--txt)}
+
+/* ── CARDS ── */
+.section-title{font-size:13px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
+.card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
+.item-row{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--borda);gap:10px}
+.item-row:last-child{border-bottom:none}
+.item-cat{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.item-info{flex:1;min-width:0}
+.item-desc{font-size:14px;font-weight:600;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:11px;color:var(--txt3);margin-top:2px}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.item-val{font-size:14px;font-weight:700}
+.item-val.desp{color:var(--vm)}
+.item-val.rec{color:var(--vd)}
+.pago-btn{font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;border:none;cursor:pointer}
+.pago-btn.pago{background:#dcfce7;color:#16a34a}
+.pago-btn.pend{background:#fef9c3;color:#b45309}
+.item-actions{display:flex;gap:6px;margin-top:2px}
+.btn-edit,.btn-del{font-size:10px;padding:2px 8px;border-radius:6px;border:none;cursor:pointer;font-weight:600}
+.btn-edit{background:#eff6ff;color:var(--az)}
+.btn-del{background:#fef2f2;color:var(--vm)}
+.empty{text-align:center;padding:32px;color:var(--txt3);font-size:14px}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:80px;right:20px;width:54px;height:54px;background:var(--az);border:none;border-radius:50%;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 14px rgba(26,86,219,.4);display:flex;align-items:center;justify-content:center;z-index:99;transition:.2s}
+.fab:active{transform:scale(.93)}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:.25s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:24px 24px 0 0;padding:24px 20px 32px;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:.25s}
+.overlay.open .modal{transform:translateY(0)}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt2)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--borda);border-radius:10px;font-size:15px;color:var(--txt);outline:none;background:#fafafa}
+.field input:focus,.field select:focus{border-color:var(--az);background:#fff}
+.tipo-btns{display:flex;gap:8px}
+.tipo-btn{flex:1;padding:10px;border:2px solid var(--borda);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;transition:.15s;text-align:center}
+.tipo-btn.active-desp{border-color:var(--vm);background:#fef2f2;color:var(--vm)}
+.tipo-btn.active-rec{border-color:var(--vd);background:#f0fdf4;color:var(--vd)}
+.btn-save{width:100%;padding:14px;background:var(--az);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+
+/* ── FECHAMENTO ── */
+.fech-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.fech-header{padding:14px 16px;font-weight:700;font-size:14px;color:#fff}
+.fech-header.d15{background:#1e40af}
+.fech-header.d30{background:#7c3aed}
+.fech-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--borda);font-size:13px}
+.fech-item:last-child{border-bottom:none}
+.fech-item-left{display:flex;align-items:center;gap:8px}
+.fech-total{display:flex;justify-content:space-between;padding:12px 16px;border-top:2px solid var(--borda);font-weight:700;font-size:14px}
+
+/* ── RECORRENTES ── */
+.rec-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+.rec-top{display:flex;align-items:center;justify-content:space-between}
+.rec-nome{font-size:15px;font-weight:700;color:var(--txt)}
+.rec-val{font-size:15px;font-weight:700}
+.rec-meta{font-size:12px;color:var(--txt3);margin-top:4px}
+.rec-actions{display:flex;gap:6px;margin-top:10px}
+
+/* ── LOADING ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--txt3)}
+.spinner{width:28px;height:28px;border:3px solid var(--borda);border-top-color:var(--az);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<div id="setupScreen">
-  <div class="setup-card">
-    <div style="font-size:48px;margin-bottom:12px">💰</div>
-    <h2>Finanças do Casal</h2>
-    <p>Bem-vindo! Digite seu nome para entrar.</p>
-    <div class="config-form">
-      <label>Seu nome</label>
-      <input id="cfgNome" placeholder="Ex: Julio" style="font-size:16px;padding:12px">
+<!-- AUTH -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="icon">💰</div>
+      <h1>Finanças do Casal</h1>
+      <p>Controle financeiro em tempo real</p>
     </div>
-    <button class="btn-primary" onclick="conectar()">Entrar →</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchTab('cadastro')">Cadastrar</button>
+    </div>
+    <div class="auth-err" id="authErr"></div>
+
+    <!-- Login -->
+    <div id="tabLogin">
+      <div class="form-group"><label>E-mail</label><input id="lEmail" type="email" placeholder="seu@email.com" autocomplete="email"></div>
+      <div class="form-group"><label>Senha</label><input id="lSenha" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn-auth" onclick="fazerLogin()">Entrar →</button>
+      <p class="auth-note">Acesso restrito ao casal.</p>
+    </div>
+
+    <!-- Cadastro -->
+    <div id="tabCadastro" style="display:none">
+      <div class="form-group"><label>Seu nome</label><input id="cNome" placeholder="Como quer ser chamado(a)"></div>
+      <div class="form-group"><label>E-mail</label><input id="cEmail" type="email" placeholder="seu@email.com" autocomplete="email"></div>
+      <div class="form-group"><label>Senha</label><input id="cSenha" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
+      <button class="btn-auth" onclick="fazerCadastro()">Criar conta →</button>
+      <p class="auth-note">Crie sua conta para acessar.</p>
+    </div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <div class="topbar">
-    <div class="topbar-left">
-      <span style="font-size:22px">💰</span>
-      <div><div class="tb-title">Finanças do Casal</div><div class="tb-sub" id="tbSub">—</div></div>
+    <span class="topbar-title">💰 Finanças</span>
+    <div class="topbar-right">
+      <span class="topbar-user" id="topUser"></span>
+      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
-    <button class="user-badge" onclick="trocarNome()"><span id="lblUser">👤</span> ▾</button>
   </div>
 
-  <div class="nav-tabs">
-    <button class="tab active" data-tab="visao" onclick="showTab(this)">📊 Visão Geral</button>
-    <button class="tab" data-tab="lanc" onclick="showTab(this)">📝 Lançamentos</button>
-    <button class="tab" data-tab="recorrentes" onclick="showTab(this)">🔁 Recorrentes</button>
-    <button class="tab" data-tab="hist" onclick="showTab(this)">📅 Histórico</button>
-  </div>
-
-  <!-- VISÃO GERAL -->
-  <div class="tab-content active" id="tab-visao">
-    <div class="mes-nav">
-      <button onclick="moveMes(-1)">‹</button>
-      <span id="lblMes1">—</span>
-      <button onclick="moveMes(1)">›</button>
+  <!-- PAGE: LANÇAMENTOS -->
+  <div id="pageLanc" class="page active">
+    <div class="mes-bar">
+      <button onclick="mudarMes(-1)">‹</button>
+      <span class="mes-label" id="mesLabel">—</span>
+      <button onclick="mudarMes(1)">›</button>
     </div>
     <div class="kpi-grid">
-      <div class="kpi"><div class="lbl">💰 Receitas</div><div class="val" id="kRec" style="color:var(--vd)">R$ 0</div><div class="sub">no mês</div></div>
-      <div class="kpi"><div class="lbl">💸 Despesas</div><div class="val" id="kDesp" style="color:var(--vm)">R$ 0</div><div class="sub">no mês</div></div>
-      <div class="kpi"><div class="lbl">📊 Saldo</div><div class="val" id="kSaldo">R$ 0</div><div class="sub">receitas − despesas</div></div>
-      <div class="kpi"><div class="lbl">⏳ A pagar</div><div class="val" id="kPend" style="color:var(--am)">R$ 0</div><div class="sub">pendentes</div></div>
+      <div class="kpi"><div class="kpi-lbl">Receitas</div><div class="kpi-val green" id="kReceit">R$ 0</div></div>
+      <div class="kpi"><div class="kpi-lbl">Despesas</div><div class="kpi-val red" id="kDesp">R$ 0</div></div>
+      <div class="kpi"><div class="kpi-lbl">Saldo</div><div class="kpi-val" id="kSaldo">R$ 0</div></div>
+      <div class="kpi"><div class="kpi-lbl">A pagar</div><div class="kpi-val orange" id="kPagar">R$ 0</div></div>
     </div>
-    <div class="fechamento-grid">
-      <div class="fech-card">
-        <div class="fech-hdr d15">📅 Fechamento Dia 15</div>
-        <div class="fech-body" id="f15"><div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div></div>
-        <div class="fech-rec" id="fr15" style="display:none">
-          <div style="padding:4px 14px 2px;font-size:11px;font-weight:600;color:var(--txt3);border-top:1px solid #f3f4f6">RECEITAS ATÉ DIA 15</div>
-          <div id="frlist15"></div>
-        </div>
-        <div class="fech-toggle" onclick="toggleResumo('15')">
-          <span id="ftlbl15">📊 Ver resumo</span> <span id="ftarr15">▾</span>
-        </div>
-        <div id="fresumo15" style="display:none">
-          <div class="fech-total"><span>💸 Despesas</span><span id="t15" style="color:#1e3a8a">R$ 0</span></div>
-          <div class="fech-total" id="fs15" style="display:none"><span>💰 Receitas</span><span id="tr15" style="color:var(--vd)">R$ 0</span></div>
-          <div class="fech-total fech-saldo" id="fsd15" style="display:none"><span>📊 Saldo</span><span id="tsd15">R$ 0</span></div>
-        </div>
-      </div>
-      <div class="fech-card">
-        <div class="fech-hdr d30">📅 Fechamento Dia 30</div>
-        <div class="fech-body" id="f30"><div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div></div>
-        <div class="fech-rec" id="fr30" style="display:none">
-          <div style="padding:4px 14px 2px;font-size:11px;font-weight:600;color:var(--txt3);border-top:1px solid #f3f4f6">RECEITAS ATÉ DIA 30</div>
-          <div id="frlist30"></div>
-        </div>
-        <div class="fech-toggle" onclick="toggleResumo('30')">
-          <span id="ftlbl30">📊 Ver resumo</span> <span id="ftarr30">▾</span>
-        </div>
-        <div id="fresumo30" style="display:none">
-          <div class="fech-total"><span>💸 Despesas</span><span id="t30" style="color:#6b21a8">R$ 0</span></div>
-          <div class="fech-total" id="fs30" style="display:none"><span>💰 Receitas</span><span id="tr30" style="color:var(--vd)">R$ 0</span></div>
-          <div class="fech-total fech-saldo" id="fsd30" style="display:none"><span>📊 Saldo</span><span id="tsd30">R$ 0</span></div>
-        </div>
-      </div>
-    </div>
+    <div class="section-title">Lançamentos do mês</div>
+    <div id="listaLanc"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
   </div>
 
-  <!-- LANÇAMENTOS -->
-  <div class="tab-content" id="tab-lanc">
-    <div class="mes-nav">
-      <button onclick="moveMes(-1)">‹</button>
-      <span id="lblMes2">—</span>
-      <button onclick="moveMes(1)">›</button>
+  <!-- PAGE: FECHAMENTO -->
+  <div id="pageFech" class="page">
+    <div class="mes-bar">
+      <button onclick="mudarMes(-1)">‹</button>
+      <span class="mes-label" id="mesLabel2">—</span>
+      <button onclick="mudarMes(1)">›</button>
     </div>
-    <div class="section-hdr">
-      <h3>Lançamentos do mês</h3>
-      <button class="btn-add" onclick="abrirModal(null)">＋ Novo</button>
-    </div>
-    <div class="lancamentos-list" id="listaLanc">
-      <div class="empty"><div class="empty-icon">📋</div>Nenhum lançamento</div>
-    </div>
+    <div id="fechContent"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
   </div>
 
-  <!-- RECORRENTES -->
-  <div class="tab-content" id="tab-recorrentes">
-    <div class="info-box">
-      🔁 <strong>Recorrentes aparecem automaticamente todo mês</strong> nos KPIs e nos fechamentos — sem você precisar lançar. As de valor variável ficam com um botão para atualizar o valor quando necessário.
-    </div>
-    <div class="section-hdr">
-      <h3>Despesas e receitas fixas</h3>
-      <button class="btn-add" onclick="abrirModalRec(null)">＋ Nova</button>
-    </div>
-    <div id="listaRec">
-      <div class="empty"><div class="empty-icon">🔁</div>Nenhuma recorrente cadastrada</div>
-    </div>
-  </div>
-
-  <!-- HISTÓRICO -->
-  <div class="tab-content" id="tab-hist">
-    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Histórico por mês</h3>
-    <div id="listaHist"><div class="empty"><div class="empty-icon">📅</div>Sem histórico ainda</div></div>
+  <!-- PAGE: RECORRENTES -->
+  <div id="pageRec" class="page">
+    <div class="section-title">Contas recorrentes</div>
+    <div id="listaRec"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
   </div>
 </div>
 
+<!-- FAB -->
+<button class="fab" id="fabBtn" onclick="abrirModal()" style="display:none">+</button>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar" style="display:none">
+  <button class="nav-btn active" id="nav0" onclick="showPage(0)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Início
+  </button>
+  <button class="nav-btn" id="nav1" onclick="showPage(1)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Fechamento
+  </button>
+  <button class="nav-btn" id="nav2" onclick="showPage(2)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Recorrentes
+  </button>
+</nav>
+
 <!-- MODAL LANÇAMENTO -->
-<div class="modal-overlay" id="overlay" onclick="if(event.target===this)fecharModal()">
+<div class="overlay" id="overlayLanc">
   <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="mTitulo">Novo Lançamento</h3>
-      <button class="btn-close" onclick="fecharModal()">✕</button>
-    </div>
-    <div class="form-group">
-      <label>Tipo</label>
-      <div class="type-selector">
-        <button class="type-btn active desp" id="bDesp" onclick="setTipo('despesa')">💸 Despesa</button>
-        <button class="type-btn rec" id="bRec" onclick="setTipo('receita')">💰 Receita</button>
-      </div>
-    </div>
-    <div class="form-group"><label>Descrição</label><input id="mDesc" placeholder="Ex: Aluguel, Mercado, Salário..."></div>
-    <div class="form-row">
-      <div class="form-group"><label>Valor (R$)</label><input id="mValor" type="number" step="0.01" min="0" placeholder="0,00"></div>
-      <div class="form-group"><label>Data</label><input id="mData" type="date"></div>
-    </div>
-    <div class="form-group">
-      <label>Categoria</label>
-      <select id="mCat">
-        <option value="moradia">🏠 Moradia</option><option value="alimentacao">🍽️ Alimentação</option>
-        <option value="transporte">🚗 Transporte</option><option value="saude">❤️ Saúde</option>
-        <option value="educacao">📚 Educação</option><option value="lazer">🎉 Lazer</option>
-        <option value="streaming">📺 Streaming</option><option value="vestuario">👕 Vestuário</option>
-        <option value="salario">💼 Salário</option><option value="outros">📦 Outros</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Natureza</label>
-        <div class="pill-selector" id="pNat">
-          <button class="pill-btn on" onclick="setPill('nat','fixo',this)">🔒 Fixo</button>
-          <button class="pill-btn" onclick="setPill('nat','variavel',this)">🔀 Variável</button>
-        </div>
-      </div>
-      <div class="form-group"><label>Responsável</label>
-        <div class="pill-selector" id="pQuem">
-          <button class="pill-btn on" onclick="setPill('quem','conjunto',this)">👫 Conjunto</button>
-          <button class="pill-btn" onclick="setPill('quem','individual',this)">👤 Individual</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-group"><label>Fechamento</label>
-      <div class="pill-selector" id="pFech">
-        <button class="pill-btn on" onclick="setPill('fech','15',this)">📅 Dia 15</button>
-        <button class="pill-btn" onclick="setPill('fech','30',this)">📅 Dia 30</button>
-      </div>
-    </div>
-    <div class="form-group" id="grpPago"><label>Situação</label>
-      <div class="pill-selector" id="pPago">
-        <button class="pill-btn on" onclick="setPill('pago','sim',this)">✅ Pago</button>
-        <button class="pill-btn" onclick="setPill('pago','nao',this)">⏳ Pendente</button>
-      </div>
+    <div class="modal-title">
+      <span id="modalTitulo">Novo lançamento</span>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
     </div>
     <input type="hidden" id="mId">
-    <button class="btn-salvar" onclick="salvar()">💾 Salvar</button>
+    <div class="field">
+      <label>Tipo</label>
+      <div class="tipo-btns">
+        <button class="tipo-btn active-desp" id="btnDesp" onclick="setTipo('despesa')">💸 Despesa</button>
+        <button class="tipo-btn" id="btnRec" onclick="setTipo('receita')">💰 Receita</button>
+      </div>
+    </div>
+    <div class="field"><label>Descrição</label><input id="mDesc" placeholder="Ex: Supermercado, Salário..."></div>
+    <div class="field"><label>Valor (R$)</label><input id="mValor" type="number" placeholder="0,00" step="0.01" min="0"></div>
+    <div class="field"><label>Categoria</label>
+      <select id="mCat">
+        <option value="🏠">🏠 Moradia</option>
+        <option value="🍽️">🍽️ Alimentação</option>
+        <option value="🚗">🚗 Transporte</option>
+        <option value="💊">💊 Saúde</option>
+        <option value="🎓">🎓 Educação</option>
+        <option value="🎮">🎮 Lazer</option>
+        <option value="👕">👕 Vestuário</option>
+        <option value="💼">💼 Trabalho</option>
+        <option value="💳">💳 Cartão/Financ.</option>
+        <option value="💵">💵 Salário</option>
+        <option value="📦">📦 Outros</option>
+      </select>
+    </div>
+    <div class="field"><label>Fechamento</label>
+      <select id="mFech">
+        <option value="15">Dia 15</option>
+        <option value="30">Dia 30</option>
+      </select>
+    </div>
+    <div class="field" id="fieldPago">
+      <label>Status</label>
+      <select id="mPago">
+        <option value="nao">⏳ Pendente</option>
+        <option value="sim">✅ Pago</option>
+      </select>
+    </div>
+    <button class="btn-save" onclick="salvarLanc()">Salvar</button>
   </div>
 </div>
 
 <!-- MODAL RECORRENTE -->
-<div class="modal-overlay" id="overlayRec" onclick="if(event.target===this)fecharModalRec()">
+<div class="overlay" id="overlayRec">
   <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="rTitulo">Nova Recorrente</h3>
-      <button class="btn-close" onclick="fecharModalRec()">✕</button>
-    </div>
-    <div class="form-group"><label>Tipo</label>
-      <div class="type-selector">
-        <button class="type-btn active desp" id="rBDesp" onclick="setTipoRec('despesa')">💸 Despesa</button>
-        <button class="type-btn rec" id="rBRec" onclick="setTipoRec('receita')">💰 Receita</button>
-      </div>
-    </div>
-    <div class="form-group"><label>Descrição</label><input id="rDesc" placeholder="Ex: Aluguel, Salário, Netflix..."></div>
-    <div class="form-row">
-      <div class="form-group"><label>Valor (R$)</label><input id="rValor" type="number" step="0.01" min="0" placeholder="0,00"></div>
-      <div class="form-group"><label>Dia do vencimento</label><input id="rDia" type="number" min="1" max="31" placeholder="Ex: 5"></div>
-    </div>
-    <div class="form-group"><label>Categoria</label>
-      <select id="rCat">
-        <option value="moradia">🏠 Moradia</option><option value="alimentacao">🍽️ Alimentação</option>
-        <option value="transporte">🚗 Transporte</option><option value="saude">❤️ Saúde</option>
-        <option value="educacao">📚 Educação</option><option value="lazer">🎉 Lazer</option>
-        <option value="streaming">📺 Streaming</option><option value="vestuario">👕 Vestuário</option>
-        <option value="salario">💼 Salário</option><option value="outros">📦 Outros</option>
-      </select>
-    </div>
-    <div class="form-group"><label>Valor</label>
-      <div class="pill-selector" id="rPNat">
-        <button class="pill-btn on" onclick="setPillRec('nat','fixo',this)">🔒 Valor fixo</button>
-        <button class="pill-btn" onclick="setPillRec('nat','variavel',this)">🔀 Valor variável</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Responsável</label>
-        <div class="pill-selector" id="rPQuem">
-          <button class="pill-btn on" onclick="setPillRec('quem','conjunto',this)">👫 Conjunto</button>
-          <button class="pill-btn" onclick="setPillRec('quem','individual',this)">👤 Individual</button>
-        </div>
-      </div>
-      <div class="form-group"><label>Fechamento</label>
-        <div class="pill-selector" id="rPFech">
-          <button class="pill-btn on" onclick="setPillRec('fech','15',this)">📅 Dia 15</button>
-          <button class="pill-btn" onclick="setPillRec('fech','30',this)">📅 Dia 30</button>
-        </div>
-      </div>
+    <div class="modal-title">
+      <span>Nova recorrente</span>
+      <button class="modal-close" onclick="fecharModalRec()">✕</button>
     </div>
     <input type="hidden" id="rId">
-    <button class="btn-salvar" onclick="salvarRec()">💾 Salvar</button>
+    <div class="field"><label>Tipo</label>
+      <select id="rTipo">
+        <option value="despesa">💸 Despesa</option>
+        <option value="receita">💰 Receita</option>
+      </select>
+    </div>
+    <div class="field"><label>Descrição</label><input id="rDesc" placeholder="Ex: Aluguel, Salário..."></div>
+    <div class="field"><label>Valor padrão (R$)</label><input id="rValor" type="number" placeholder="0,00" step="0.01" min="0"></div>
+    <div class="field"><label>Categoria</label>
+      <select id="rCat">
+        <option value="🏠">🏠 Moradia</option>
+        <option value="🍽️">🍽️ Alimentação</option>
+        <option value="🚗">🚗 Transporte</option>
+        <option value="💊">💊 Saúde</option>
+        <option value="💵">💵 Salário</option>
+        <option value="💳">💳 Cartão/Financ.</option>
+        <option value="📦">📦 Outros</option>
+      </select>
+    </div>
+    <div class="field"><label>Fechamento</label>
+      <select id="rFech">
+        <option value="15">Dia 15</option>
+        <option value="30">Dia 30</option>
+      </select>
+    </div>
+    <div class="field"><label>Valor variável?</label>
+      <select id="rVariavel">
+        <option value="nao">Não — valor fixo</option>
+        <option value="sim">Sim — posso ajustar por mês</option>
+      </select>
+    </div>
+    <button class="btn-save" onclick="salvarRec()">Salvar</button>
   </div>
 </div>
 
-<!-- MODAL ATUALIZAR VALOR VARIÁVEL -->
-<div class="modal-overlay" id="overlayVal" onclick="if(event.target===this)fecharModalVal()">
-  <div class="modal" style="max-height:300px">
-    <div class="modal-hdr">
-      <h3 id="vTitulo">Atualizar valor</h3>
-      <button class="btn-close" onclick="fecharModalVal()">✕</button>
+<!-- MODAL VALOR VARIÁVEL -->
+<div class="overlay" id="overlayVal">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="vTitulo">Atualizar valor</span>
+      <button class="modal-close" onclick="fecharModalVal()">✕</button>
     </div>
-    <div class="form-group"><label>Novo valor para este mês (R$)</label><input id="vValor" type="number" step="0.01" min="0" placeholder="0,00"></div>
     <input type="hidden" id="vRecId">
     <input type="hidden" id="vMes">
-    <button class="btn-salvar" onclick="salvarValorVariavel()">💾 Confirmar</button>
+    <div class="field"><label>Valor deste mês (R$)</label><input id="vValor" type="number" placeholder="0,00" step="0.01"></div>
+    <button class="btn-save" onclick="salvarValorVariavel()">Salvar</button>
   </div>
 </div>
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getDatabase,ref,push,set,remove,onValue}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getDatabase,ref,push,set,get,onValue,remove,query,orderByChild}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const ICONS={moradia:'🏠',alimentacao:'🍽️',transporte:'🚗',saude:'❤️',educacao:'📚',lazer:'🎉',streaming:'📺',vestuario:'👕',salario:'💼',outros:'📦'};
-const R=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
-const mkMes=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-const lbMes=d=>`${MESES[d.getMonth()]} ${d.getFullYear()}`;
-
-let db,dbRef,recRef,valRef,pagRef;
-let dados={},recorrentes={},valoresVariaveis={},pagamentosRec={};
-let mesAtual=new Date(),tipo='despesa',tipoRec='despesa';
-let pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'};
-let pillsRec={nat:'fixo',quem:'conjunto',fech:'15'};
-let nome='';
-
-window.conectar=function(){
-  nome=document.getElementById('cfgNome').value.trim()||'Usuário';
-  if(!nome){alert('Digite seu nome para entrar');return;}
-  localStorage.setItem('fnome',nome);
-  const cfg={
-    apiKey:'AIzaSyC54FUgmARdcGjy1tOVNerFMPvcBL921MI',
-    authDomain:'despesas-c2f24.firebaseapp.com',
-    databaseURL:'https://despesas-c2f24-default-rtdb.firebaseio.com',
-    projectId:'despesas-c2f24'
-  };
-  init(cfg);
-};
-
-function init(cfg){
-  const app=initializeApp(cfg);db=getDatabase(app);
-  dbRef=ref(db,'lancamentos');
-  recRef=ref(db,'recorrentes');
-  valRef=ref(db,'valores_variaveis');
-  pagRef=ref(db,'pagamentos_rec');
-  document.getElementById('setupScreen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('lblUser').textContent='👤 '+nome;
-  document.getElementById('mData').value=new Date().toISOString().split('T')[0];
-  onValue(dbRef,s=>{dados=s.val()||{};render();});
-  onValue(recRef,s=>{recorrentes=s.val()||{};render();});
-  onValue(valRef,s=>{valoresVariaveis=s.val()||{};render();});
-  onValue(pagRef,s=>{pagamentosRec=s.val()||{};render();});
-}
-
-// Retorna o valor de uma recorrente para um mês específico
-// Se variável e tem override para o mês, usa o override; senão usa o valor padrão
-function getValorRec(rec, mk){
-  if(rec.nat==='variavel'){
-    const override=valoresVariaveis[rec.id]?.[mk];
-    return override!==undefined?override:rec.valor;
-  }
-  return rec.valor;
-}
-
-function getPagoRec(recId, mk){
-  return pagamentosRec[recId]?.[mk] ?? 'nao';
-}
-
-// Monta lista de itens do mês (lançamentos manuais + recorrentes automáticas)
-function getItensMes(mk){
-  const manuais=Object.entries(dados).filter(([,v])=>v.mes===mk).map(([k,v])=>({...v,id:k,isRec:false}));
-  const recs=Object.entries(recorrentes).map(([k,v])=>{
-    const valor=getValorRec({...v,id:k},mk);
-    const pago=getPagoRec(k,mk);
-    const dia=String(v.dia||1).padStart(2,'0');
-    const data=`${mk}-${dia}`;
-    return {...v,id:k,valor,pago,data,mes:mk,isRec:true,recId:k};
-  });
-  return [...manuais,...recs].sort((a,b)=>b.data.localeCompare(a.data));
-}
-
-window.showTab=function(btn){
-  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-  btn.classList.add('active');render();
-};
-
-window.moveMes=function(d){mesAtual=new Date(mesAtual.getFullYear(),mesAtual.getMonth()+d,1);render();};
-window.trocarNome=function(){const n=prompt('Seu nome:');if(n){nome=n.trim();localStorage.setItem('fnome',nome);document.getElementById('lblUser').textContent='👤 '+nome;}};
-
-function render(){
-  const mk=mkMes(mesAtual),lb=lbMes(mesAtual);
-  ['lblMes1','lblMes2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=lb;});
-  document.getElementById('tbSub').textContent=lb;
-  const itens=getItensMes(mk);
-
-  // KPIs
-  const rec=itens.filter(i=>i.tipo==='receita').reduce((s,i)=>s+i.valor,0);
-  const desp=itens.filter(i=>i.tipo==='despesa').reduce((s,i)=>s+i.valor,0);
-  const pend=itens.filter(i=>i.tipo==='despesa'&&i.pago==='nao').reduce((s,i)=>s+i.valor,0);
-  const saldo=rec-desp;
-  document.getElementById('kRec').textContent=R(rec);
-  document.getElementById('kDesp').textContent=R(desp);
-  document.getElementById('kSaldo').textContent=R(saldo);
-  document.getElementById('kSaldo').style.color=saldo>=0?'var(--vd)':'var(--vm)';
-  document.getElementById('kPend').textContent=R(pend);
-
-  // Fechamentos
-  // Dia 15: despesas fech=15 + receitas com dia <= 15
-  // Dia 30: despesas fech=30 + receitas com dia > 15 (ou sem fech)
-  ['15','30'].forEach(d=>{
-    const despesas = itens.filter(i=>i.tipo==='despesa'&&i.fech===d);
-    const totDesp  = despesas.reduce((s,i)=>s+i.valor,0);
-
-    // Receitas: para dia 15 pega receitas com dia de vencimento <= 15, para dia 30 as demais
-    const receitas = itens.filter(i=>{
-      if(i.tipo!=='receita') return false;
-      const diaNum = parseInt((i.data||'').split('-')[2]||'99');
-      return d==='15' ? diaNum<=15 : diaNum>15;
-    });
-    const totRec = receitas.reduce((s,i)=>s+i.valor,0);
-    const saldo  = totRec - totDesp;
-
-    // Despesas
-    document.getElementById('t'+d).textContent=R(totDesp);
-    const el=document.getElementById('f'+d);
-    el.innerHTML=despesas.length?despesas.map(i=>`<div class="fech-row">
-      <span>${ICONS[i.categoria]||'📦'} ${i.desc}${i.isRec?' 🔁':''}</span>
-      <span style="color:${i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span>
-    </div>`).join(''):'<div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div>';
-
-    // Receitas
-    const frEl  = document.getElementById('fr'+d);
-    const frList= document.getElementById('frlist'+d);
-    const fsEl  = document.getElementById('fs'+d);
-    const fsdEl = document.getElementById('fsd'+d);
-    const trEl  = document.getElementById('tr'+d);
-    const tsdEl = document.getElementById('tsd'+d);
-
-    if(receitas.length>0){
-      frEl.style.display='';
-      frList.innerHTML=receitas.map(i=>`<div class="fech-row" style="padding:5px 14px;display:flex;justify-content:space-between;font-size:12px">
-        <span>${ICONS[i.categoria]||'📦'} ${i.desc}${i.isRec?' 🔁':''}</span>
-        <span style="color:var(--vd);font-weight:600">${R(i.valor)}</span>
-      </div>`).join('');
-      fsEl.style.display=''; trEl.textContent=R(totRec);
-    } else {
-      frEl.style.display='none'; fsEl.style.display='none';
-    }
-
-    // Saldo sempre visível se houver despesas
-    if(despesas.length>0||receitas.length>0){
-      fsdEl.style.display='';
-      tsdEl.textContent=R(saldo);
-      tsdEl.style.color=saldo>=0?'var(--vd)':'var(--vm)';
-    } else {
-      fsdEl.style.display='none';
-    }
-  });
-
-  // Lista lançamentos (manuais + recorrentes)
-  const ll=document.getElementById('listaLanc');
-  ll.innerHTML=itens.length?itens.map(i=>`<div class="lanc-item${i.isRec?' recorrente-item':''}">
-    <div class="lanc-icon ${i.tipo}">${i.tipo==='receita'?'💰':'💸'}</div>
-    <div class="lanc-info">
-      <div class="lanc-desc">${ICONS[i.categoria]||'📦'} ${i.desc}</div>
-      <div class="lanc-meta">
-        <span>${i.data}</span>
-        ${i.isRec?'<span class="tag recorrente">🔁 Recorrente</span>':''}
-        ${i.isRec&&i.nat==='variavel'?`<button class="btn-atualizar" onclick="abrirModalVal('${i.recId}','${mk}',${i.valor},'${i.desc}')">✏️ Valor</button>`:''}
-        ${i.isRec&&i.tipo==='despesa'?`<button class="btn-atualizar" style="background:${i.pago==='sim'?'#d1fae5':'#fee2e2'};color:${i.pago==='sim'?'#065f46':'#991b1b'};border-color:${i.pago==='sim'?'#6ee7b7':'#fca5a5'}" onclick="togglePagoRec('${i.recId}','${mk}','${i.pago}')">${i.pago==='sim'?'✅ Pago':'⏳ Pendente'}</button>`:''}
-        ${!i.isRec?`<span class="tag ${i.nat||i.natureza}">${(i.nat||i.natureza)==='fixo'?'Fixo':'Variável'}</span>`:''}
-        <span class="tag ${i.quem}">${i.quem==='conjunto'?'👫 Conjunto':'👤 Individual'}</span>
-        <span class="tag d${i.fech}">Dia ${i.fech}</span>
-        ${(!i.isRec&&i.tipo==='despesa')?`<span style="color:${i.pago==='sim'?'var(--vd)':'var(--am)'};font-size:10px">${i.pago==='sim'?'✅':'⏳'}</span>`:''}
-        ${!i.isRec?`<span class="badge-quem">${i.quem_nome||'?'}</span>`:''}
-      </div>
-    </div>
-    <div class="lanc-valor ${i.tipo}">${i.tipo==='despesa'?'- ':'+ '}${R(i.valor)}</div>
-    <div class="lanc-actions">
-      ${i.isRec?`<button class="btn-icon" onclick="showTab(document.querySelector('[data-tab=recorrentes]'))" title="Ver recorrentes">🔁</button>`:
-        `<button class="btn-icon" onclick="editarItem('${i.id}')">✏️</button>
-         <button class="btn-icon" onclick="excluirItem('${i.id}')">🗑️</button>`}
-    </div>
-  </div>`).join(''):'<div class="empty"><div class="empty-icon">📋</div>Nenhum lançamento neste mês</div>';
-
-  // Lista recorrentes
-  const lr=document.getElementById('listaRec');
-  const recList=Object.entries(recorrentes);
-  lr.innerHTML=recList.length?recList.map(([k,i])=>`<div class="rec-card">
-    <div class="lanc-icon ${i.tipo}">${i.tipo==='receita'?'💰':'💸'}</div>
-    <div class="rec-info">
-      <div class="rec-desc">${ICONS[i.categoria]||'📦'} ${i.desc}</div>
-      <div class="rec-meta">
-        <span>Vence dia ${i.dia||'?'}</span>
-        <span class="tag fixo">${i.nat==='fixo'?'🔒 Valor fixo':'🔀 Valor variável'}</span>
-        <span class="tag ${i.quem}">${i.quem==='conjunto'?'👫 Conjunto':'👤 Individual'}</span>
-        <span class="tag d${i.fech}">Dia ${i.fech}</span>
-      </div>
-    </div>
-    <div class="rec-valor ${i.tipo}">${R(i.valor)}</div>
-    <div class="lanc-actions">
-      <button class="btn-icon" onclick="editarRec('${k}')">✏️</button>
-      <button class="btn-icon" onclick="excluirRec('${k}')">🗑️</button>
-    </div>
-  </div>`).join(''):'<div class="empty"><div class="empty-icon">🔁</div>Nenhuma recorrente cadastrada<br><small style="font-size:12px;color:var(--txt3);margin-top:4px;display:block">Clique em + Nova para adicionar aluguel, salário, etc.</small></div>';
-
-  // Histórico
-  const todosItens=[];
-  const mks=[...new Set([
-    ...Object.values(dados).map(v=>v.mes),
-    ...Object.keys(recorrentes).length?[mkMes(new Date())]:[]
-  ])].sort().reverse();
-  const lh=document.getElementById('listaHist');
-  lh.innerHTML=mks.length?mks.map(mk2=>{
-    const [ano,m]=mk2.split('-');
-    const its=getItensMes(mk2);
-    const r2=its.filter(i=>i.tipo==='receita').reduce((s,i)=>s+i.valor,0);
-    const d2=its.filter(i=>i.tipo==='despesa').reduce((s,i)=>s+i.valor,0);
-    const s2=r2-d2;
-    return `<div class="hist-card"><div class="hist-hdr"><h4>${MESES[+m-1]} ${ano}</h4><span style="font-size:13px;font-weight:700;color:${s2>=0?'var(--vd)':'var(--vm)'}">${s2>=0?'+':''}${R(s2)}</span></div><div class="hist-body"><div class="fech-row"><span>💰 Receitas</span><span style="color:var(--vd);font-weight:600">${R(r2)}</span></div><div class="fech-row"><span>💸 Despesas</span><span style="color:var(--vm);font-weight:600">${R(d2)}</span></div><div class="fech-row"><span>📋 Lançamentos</span><span>${its.length}</span></div></div></div>`;
-  }).join(''):'<div class="empty"><div class="empty-icon">📅</div>Sem histórico ainda</div>';
-}
-
-// ── MODAL LANÇAMENTO ─────────────────────────────
-window.abrirModal=function(id){
-  document.getElementById('mId').value=id||'';
-  document.getElementById('mTitulo').textContent=id?'Editar Lançamento':'Novo Lançamento';
-  if(id){const i=dados[id];document.getElementById('mDesc').value=i.desc;document.getElementById('mValor').value=i.valor;document.getElementById('mData').value=i.data;document.getElementById('mCat').value=i.categoria;setTipo(i.tipo);pills={nat:i.nat||i.natureza||'fixo',quem:i.quem||'conjunto',fech:i.fech||'15',pago:i.pago||'sim'};}
-  else{document.getElementById('mDesc').value='';document.getElementById('mValor').value='';document.getElementById('mData').value=new Date().toISOString().split('T')[0];document.getElementById('mCat').value='moradia';setTipo('despesa');pills={nat:'fixo',quem:'conjunto',fech:'15',pago:'sim'};}
-  syncPills();document.getElementById('overlay').classList.add('open');
-};
-function syncPills(){[['pNat','nat'],['pQuem','quem'],['pFech','fech'],['pPago','pago']].forEach(([pid,key])=>{document.getElementById(pid).querySelectorAll('.pill-btn').forEach(b=>{const m=b.getAttribute('onclick').match(/'([^']+)'\s*,this/);if(m)b.classList.toggle('on',m[1]===pills[key]);});});}
-window.fecharModal=function(){document.getElementById('overlay').classList.remove('open');};
-window.setTipo=function(t){tipo=t;document.getElementById('bDesp').className='type-btn'+(t==='despesa'?' active desp':' desp');document.getElementById('bRec').className='type-btn'+(t==='receita'?' active rec':' rec');document.getElementById('grpPago').style.display=t==='despesa'?'':'none';};
-window.setPill=function(grupo,val,btn){pills[grupo]=val;btn.closest('.pill-selector').querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
-window.salvar=async function(){
-  const desc=document.getElementById('mDesc').value.trim();const valor=parseFloat(document.getElementById('mValor').value);const data=document.getElementById('mData').value;
-  if(!desc||!valor||isNaN(valor)||!data){alert('Preencha descrição, valor e data');return;}
-  const item={tipo,desc,valor,data,mes:data.substring(0,7),categoria:document.getElementById('mCat').value,nat:pills.nat,natureza:pills.nat,quem:pills.quem,fech:pills.fech,pago:tipo==='receita'?'sim':pills.pago,quem_nome:nome,ts:Date.now()};
-  const eid=document.getElementById('mId').value;
-  if(eid){await set(ref(db,'lancamentos/'+eid),item);}else{await push(dbRef,item);}
-  fecharModal();
-};
-window.excluirItem=function(id){if(confirm('Excluir este lançamento?'))remove(ref(db,'lancamentos/'+id));};
-window.editarItem=function(id){abrirModal(id);};
-
-// ── MODAL RECORRENTE ─────────────────────────────
-window.abrirModalRec=function(id){
-  document.getElementById('rId').value=id||'';
-  document.getElementById('rTitulo').textContent=id?'Editar Recorrente':'Nova Recorrente';
-  if(id){const i=recorrentes[id];document.getElementById('rDesc').value=i.desc;document.getElementById('rValor').value=i.valor;document.getElementById('rDia').value=i.dia||1;document.getElementById('rCat').value=i.categoria;setTipoRec(i.tipo);pillsRec={nat:i.nat||'fixo',quem:i.quem||'conjunto',fech:i.fech||'15'};}
-  else{document.getElementById('rDesc').value='';document.getElementById('rValor').value='';document.getElementById('rDia').value='';document.getElementById('rCat').value='moradia';setTipoRec('despesa');pillsRec={nat:'fixo',quem:'conjunto',fech:'15'};}
-  syncPillsRec();document.getElementById('overlayRec').classList.add('open');
-};
-function syncPillsRec(){[['rPNat','nat'],['rPQuem','quem'],['rPFech','fech']].forEach(([pid,key])=>{document.getElementById(pid).querySelectorAll('.pill-btn').forEach(b=>{const m=b.getAttribute('onclick').match(/'([^']+)'\s*,this/);if(m)b.classList.toggle('on',m[1]===pillsRec[key]);});});}
-window.fecharModalRec=function(){document.getElementById('overlayRec').classList.remove('open');};
-window.setTipoRec=function(t){tipoRec=t;document.getElementById('rBDesp').className='type-btn'+(t==='despesa'?' active desp':' desp');document.getElementById('rBRec').className='type-btn'+(t==='receita'?' active rec':' rec');};
-window.setPillRec=function(grupo,val,btn){pillsRec[grupo]=val;btn.closest('.pill-selector').querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
-window.salvarRec=async function(){
-  const desc=document.getElementById('rDesc').value.trim();const valor=parseFloat(document.getElementById('rValor').value);const dia=parseInt(document.getElementById('rDia').value);
-  if(!desc||!valor||isNaN(valor)||!dia){alert('Preencha todos os campos');return;}
-  const item={tipo:tipoRec,desc,valor,dia,categoria:document.getElementById('rCat').value,nat:pillsRec.nat,quem:pillsRec.quem,fech:pillsRec.fech,quem_nome:nome,ts:Date.now()};
-  const eid=document.getElementById('rId').value;
-  if(eid){await set(ref(db,'recorrentes/'+eid),item);}else{await push(recRef,item);}
-  fecharModalRec();
-};
-window.editarRec=function(id){abrirModalRec(id);};
-window.excluirRec=function(id){if(confirm('Excluir esta recorrente? Ela deixará de aparecer em todos os meses.'))remove(ref(db,'recorrentes/'+id));};
-
-// ── MODAL VALOR VARIÁVEL ─────────────────────────
-window.abrirModalVal=function(recId,mes,valorAtual,desc){
-  document.getElementById('vRecId').value=recId;
-  document.getElementById('vMes').value=mes;
-  document.getElementById('vValor').value=valorAtual;
-  document.getElementById('vTitulo').textContent='Atualizar: '+desc;
-  document.getElementById('overlayVal').classList.add('open');
-};
-window.fecharModalVal=function(){document.getElementById('overlayVal').classList.remove('open');};
-window.salvarValorVariavel=async function(){
-  const recId=document.getElementById('vRecId').value;
-  const mes=document.getElementById('vMes').value;
-  const valor=parseFloat(document.getElementById('vValor').value);
-  if(!valor||isNaN(valor)){alert('Digite um valor válido');return;}
-  await set(ref(db,`valores_variaveis/${recId}/${mes}`),valor);
-  fecharModalVal();
-};
-
-window.toggleResumo=function(d){
-  const el=document.getElementById('fresumo'+d);
-  const arr=document.getElementById('ftarr'+d);
-  const lbl=document.getElementById('ftlbl'+d);
-  const open=el.style.display==='none';
-  el.style.display=open?'':'none';
-  arr.textContent=open?'▴':'▾';
-  lbl.textContent=open?'📊 Ocultar resumo':'📊 Ver resumo';
-};
-
-window.togglePagoRec=async function(recId,mes,pagoAtual){
-  const novoPago = pagoAtual==='sim'?'nao':'sim';
-  await set(ref(db,`pagamentos_rec/${recId}/${mes}`),novoPago);
-};
-
-// ── AUTO-INICIAR ─────────────────────────────────
-const cfg={
+const CFG={
   apiKey:'AIzaSyC54FUgmARdcGjy1tOVNerFMPvcBL921MI',
   authDomain:'despesas-c2f24.firebaseapp.com',
   databaseURL:'https://despesas-c2f24-default-rtdb.firebaseio.com',
   projectId:'despesas-c2f24'
 };
-nome=localStorage.getItem('fnome')||'';
-if(nome){
-  init(cfg);
-} else {
-  document.getElementById('setupScreen').style.display='flex';
+
+const app  = initializeApp(CFG);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+// ── ESTADO ────────────────────────────────────────
+let user=null, userName='';
+let mesAtual = new Date().toISOString().slice(0,7); // YYYY-MM
+let tipoAtual='despesa';
+let currentPage=0;
+let unsubLanc=null, unsubRec=null;
+
+const $ = id => document.getElementById(id);
+const R = v => 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const mesNome = m => { const [y,mo]=m.split('-'); return meses[parseInt(mo)-1]+' '+y; };
+
+// ── AUTH ──────────────────────────────────────────
+window.switchTab = t => {
+  $('tabLogin').style.display    = t==='login'?'':'none';
+  $('tabCadastro').style.display = t==='cadastro'?'':'none';
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='cadastro'&&i===1)));
+  $('authErr').style.display='none';
+};
+
+function showErr(msg){$('authErr').textContent=msg;$('authErr').style.display='block';}
+
+window.fazerLogin = async()=>{
+  const email=$('lEmail').value.trim(), senha=$('lSenha').value;
+  if(!email||!senha){showErr('Preencha e-mail e senha');return;}
+  try{
+    await signInWithEmailAndPassword(auth,email,senha);
+  }catch(e){
+    showErr(e.code==='auth/user-not-found'||e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'?'E-mail ou senha incorretos':'Erro ao entrar. Tente novamente.');
+  }
+};
+
+window.fazerCadastro = async()=>{
+  const nome=$('cNome').value.trim(), email=$('cEmail').value.trim(), senha=$('cSenha').value;
+  if(!nome){showErr('Digite seu nome');return;}
+  if(!email||!senha){showErr('Preencha e-mail e senha');return;}
+  if(senha.length<6){showErr('Senha precisa ter pelo menos 6 caracteres');return;}
+  try{
+    const cred = await createUserWithEmailAndPassword(auth,email,senha);
+    await updateProfile(cred.user,{displayName:nome});
+    await set(ref(db,`usuarios_financas/${cred.user.uid}`),{nome,email});
+  }catch(e){
+    showErr(e.code==='auth/email-already-in-use'?'E-mail já cadastrado':e.code==='auth/invalid-email'?'E-mail inválido':'Erro ao cadastrar.');
+  }
+};
+
+window.fazerLogout = async()=>{
+  if(unsubLanc) unsubLanc();
+  if(unsubRec) unsubRec();
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth, u=>{
+  if(u){
+    user=u;
+    userName=u.displayName||u.email.split('@')[0];
+    $('topUser').textContent=userName;
+    $('authScreen').style.display='none';
+    $('app').style.display='block';
+    $('navbar').style.display='flex';
+    $('fabBtn').style.display='flex';
+    atualizarMesLabel();
+    loadLanc();
+    loadRec();
+  }else{
+    user=null;
+    $('authScreen').style.display='flex';
+    $('app').style.display='none';
+    $('navbar').style.display='none';
+    $('fabBtn').style.display='none';
+  }
+});
+
+// ── NAVEGAÇÃO ─────────────────────────────────────
+const pages=['pageLanc','pageFech','pageRec'];
+window.showPage = p => {
+  currentPage=p;
+  pages.forEach((id,i)=>{
+    $(id).classList.toggle('active',i===p);
+    $('nav'+i).classList.toggle('active',i===p);
+  });
+  $('fabBtn').style.display = p===2?'none':'flex';
+  if(p===1) renderFechamento();
+};
+
+window.mudarMes = d => {
+  const [y,m]=mesAtual.split('-').map(Number);
+  const nd=new Date(y,m-1+d,1);
+  mesAtual=`${nd.getFullYear()}-${String(nd.getMonth()+1).padStart(2,'0')}`;
+  atualizarMesLabel();
+  if(currentPage===0) loadLanc();
+  else if(currentPage===1) renderFechamento();
+};
+
+function atualizarMesLabel(){
+  const n=mesNome(mesAtual);
+  if($('mesLabel')) $('mesLabel').textContent=n;
+  if($('mesLabel2')) $('mesLabel2').textContent=n;
 }
-</script>
 
-  <div id="btnInstalar" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-    background:#1a56db;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
-    align-items:center;gap:8px;box-shadow:0 4px 16px rgba(26,86,219,.4);cursor:pointer;z-index:300;
-    white-space:nowrap;border:none;font-family:inherit" onclick="instalarApp()">
-    📲 Instalar o app
-  </div>
-
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(e=>console.log('SW erro:',e));
+// ── LANÇAMENTOS ───────────────────────────────────
+function loadLanc(){
+  if(!user) return;
+  if(unsubLanc) unsubLanc();
+  $('listaLanc').innerHTML='<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  unsubLanc = onValue(ref(db,'lancamentos'), snap=>{
+    renderLanc(snap);
   });
 }
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e=>{
-  e.preventDefault();
-  deferredPrompt = e;
-  setTimeout(()=>{
-    if(deferredPrompt && document.getElementById('btnInstalar'))
-      document.getElementById('btnInstalar').style.display='flex';
-  }, 3000);
-});
-window.instalarApp=async()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt=null;
-  document.getElementById('btnInstalar').style.display='none';
+
+async function renderLanc(snap){
+  const recSnap = await get(ref(db,'recorrentes'));
+  const pagSnap = await get(ref(db,'pagamentos_rec'));
+  const valSnap = await get(ref(db,'valores_variaveis'));
+
+  const lancs=[];
+  snap.forEach(c=>{ const v=c.val(); if(v.mes===mesAtual) lancs.push({...v,id:c.key}); });
+
+  // Recorrentes do mês
+  const recs=[];
+  if(recSnap.exists()){
+    recSnap.forEach(c=>{
+      const r=c.val();
+      const pago = pagSnap.exists()&&pagSnap.child(c.key).child(mesAtual).exists()
+        ? pagSnap.child(c.key).child(mesAtual).val() : 'nao';
+      const val = valSnap.exists()&&valSnap.child(c.key).child(mesAtual).exists()
+        ? valSnap.child(c.key).child(mesAtual).val() : r.valor;
+      recs.push({...r,id:c.key,isRec:true,pago,valor:val});
+    });
+  }
+
+  const todos=[...recs,...lancs].sort((a,b)=>(a.ts||0)-(b.ts||0));
+
+  // KPIs
+  let receitas=0,despesas=0,apagar=0;
+  todos.forEach(i=>{
+    if(i.tipo==='receita') receitas+=Number(i.valor||0);
+    else{ despesas+=Number(i.valor||0); if(i.pago!=='sim') apagar+=Number(i.valor||0); }
+  });
+  $('kReceit').textContent=R(receitas);
+  $('kDesp').textContent=R(despesas);
+  const saldo=receitas-despesas;
+  $('kSaldo').textContent=R(saldo);
+  $('kSaldo').className='kpi-val '+(saldo>=0?'green':'red');
+  $('kPagar').textContent=R(apagar);
+
+  if(!todos.length){ $('listaLanc').innerHTML='<div class="empty">Nenhum lançamento neste mês</div>'; return; }
+
+  let html='<div class="card">';
+  todos.forEach(i=>{
+    const isDesp=i.tipo==='despesa';
+    const bg=isDesp?'#fef2f2':'#f0fdf4';
+    html+=`<div class="item-row">
+      <div class="item-cat" style="background:${bg}">${i.cat||'📦'}</div>
+      <div class="item-info">
+        <div class="item-desc">${i.desc||i.nome||'—'}${i.isRec?' 🔁':''}</div>
+        <div class="item-meta">Fecha dia ${i.fech||30} · ${i.quem_nome||userName}</div>
+      </div>
+      <div class="item-right">
+        <span class="item-val ${isDesp?'desp':'rec'}">${R(i.valor)}</span>
+        ${isDesp?`<button class="pago-btn ${i.pago==='sim'?'pago':'pend'}" onclick="${i.isRec?`togglePagoRec('${i.id}','${mesAtual}','${i.pago}')`:`togglePago('${i.id}','${i.pago}')`}">${i.pago==='sim'?'✅ Pago':'⏳ Pendente'}</button>`:''}
+        ${!i.isRec?`<div class="item-actions"><button class="btn-edit" onclick="editarItem('${i.id}')">✏️</button><button class="btn-del" onclick="excluirItem('${i.id}')">🗑️</button></div>`:''}
+        ${i.isRec&&i.variavel==='sim'?`<button class="btn-edit" onclick="abrirModalVal('${i.id}','${mesAtual}',${i.valor},'${i.desc||i.nome||''}')">✏️ Valor</button>`:''}
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  $('listaLanc').innerHTML=html;
+}
+
+// ── FECHAMENTO ────────────────────────────────────
+async function renderFechamento(){
+  $('fechContent').innerHTML='<div class="loading"><div class="spinner"></div>Carregando...</div>';
+  const lancSnap = await get(ref(db,'lancamentos'));
+  const recSnap  = await get(ref(db,'recorrentes'));
+  const pagSnap  = await get(ref(db,'pagamentos_rec'));
+  const valSnap  = await get(ref(db,'valores_variaveis'));
+
+  const lancs=[];
+  if(lancSnap.exists()) lancSnap.forEach(c=>{ const v=c.val(); if(v.mes===mesAtual) lancs.push({...v,id:c.key}); });
+
+  const recs=[];
+  if(recSnap.exists()){
+    recSnap.forEach(c=>{
+      const r=c.val();
+      const pago = pagSnap.exists()&&pagSnap.child(c.key).child(mesAtual).exists()
+        ? pagSnap.child(c.key).child(mesAtual).val() : 'nao';
+      const val = valSnap.exists()&&valSnap.child(c.key).child(mesAtual).exists()
+        ? valSnap.child(c.key).child(mesAtual).val() : r.valor;
+      recs.push({...r,id:c.key,isRec:true,pago,valor:val});
+    });
+  }
+
+  const todos=[...recs,...lancs];
+  const f15=todos.filter(i=>(i.fech||30)==15);
+  const f30=todos.filter(i=>(i.fech||30)==30);
+
+  function buildFech(items, label, cls){
+    const despesas=items.filter(i=>i.tipo==='despesa');
+    const receitas=items.filter(i=>i.tipo==='receita');
+    const totDesp=despesas.reduce((s,i)=>s+Number(i.valor||0),0);
+    const totRec=receitas.reduce((s,i)=>s+Number(i.valor||0),0);
+    const saldo=totRec-totDesp;
+    let html=`<div class="fech-card"><div class="fech-header ${cls}">${label}</div>`;
+    if(receitas.length){
+      html+=`<div style="padding:6px 14px 2px;font-size:11px;font-weight:700;color:var(--txt3)">RECEITAS</div>`;
+      receitas.forEach(i=>{html+=`<div class="fech-item"><div class="fech-item-left"><span>${i.cat||'📦'}</span><span style="font-size:13px">${i.desc||i.nome||'—'}${i.isRec?' 🔁':''}</span></div><span style="color:var(--vd);font-weight:700">${R(i.valor)}</span></div>`;});
+    }
+    if(despesas.length){
+      html+=`<div style="padding:6px 14px 2px;font-size:11px;font-weight:700;color:var(--txt3)">DESPESAS</div>`;
+      despesas.forEach(i=>{html+=`<div class="fech-item"><div class="fech-item-left"><span>${i.cat||'📦'}</span><span style="font-size:13px">${i.desc||i.nome||'—'}${i.isRec?' 🔁':''}</span></div><div style="text-align:right"><div style="color:var(--vm);font-weight:700">${R(i.valor)}</div><div style="font-size:10px;color:${i.pago==='sim'?'var(--vd)':'var(--am)'}">${i.pago==='sim'?'✅ Pago':'⏳ Pendente'}</div></div></div>`;});
+    }
+    if(!items.length) html+=`<div class="empty">Sem lançamentos</div>`;
+    html+=`<div class="fech-total"><span>💸 Despesas</span><span style="color:var(--vm)">${R(totDesp)}</span></div>`;
+    if(totRec>0) html+=`<div class="fech-total"><span>💰 Receitas</span><span style="color:var(--vd)">${R(totRec)}</span></div><div class="fech-total" style="background:#f0fdf4;border-top:2px solid var(--vd)"><span>📊 Saldo</span><span style="color:${saldo>=0?'var(--vd)':'var(--vm)'};font-weight:800">${R(saldo)}</span></div>`;
+    html+=`</div>`;
+    return html;
+  }
+
+  $('fechContent').innerHTML=buildFech(f15,'📅 Fechamento dia 15','d15')+buildFech(f30,'📅 Fechamento dia 30','d30');
+}
+
+// ── RECORRENTES ───────────────────────────────────
+function loadRec(){
+  if(!user) return;
+  if(unsubRec) unsubRec();
+  unsubRec = onValue(ref(db,'recorrentes'), snap=>{
+    if(!snap.exists()){$('listaRec').innerHTML='<div class="empty">Nenhuma conta recorrente</div>';return;}
+    let html='';
+    snap.forEach(c=>{
+      const r=c.val();
+      html+=`<div class="rec-card">
+        <div class="rec-top">
+          <span class="rec-nome">${r.cat||'📦'} ${r.desc||r.nome||'—'} 🔁</span>
+          <span class="rec-val" style="color:${r.tipo==='despesa'?'var(--vm)':'var(--vd)'}">${R(r.valor)}</span>
+        </div>
+        <div class="rec-meta">Fecha dia ${r.fech||30} · ${r.tipo==='despesa'?'Despesa':'Receita'}${r.variavel==='sim'?' · Valor variável':''}</div>
+        <div class="rec-actions">
+          <button class="btn-del" onclick="excluirRec('${c.key}')">🗑️ Remover</button>
+        </div>
+      </div>`;
+    });
+    $('listaRec').innerHTML=html;
+  });
+}
+
+// ── MODAL LANÇAMENTO ──────────────────────────────
+window.abrirModal = (id)=>{
+  if(id){
+    get(ref(db,'lancamentos/'+id)).then(s=>{
+      if(!s.exists()) return;
+      const v=s.val();
+      $('mId').value=id;
+      $('modalTitulo').textContent='Editar lançamento';
+      $('mDesc').value=v.desc||'';
+      $('mValor').value=v.valor||'';
+      $('mCat').value=v.cat||'📦';
+      $('mFech').value=v.fech||30;
+      $('mPago').value=v.pago||'nao';
+      setTipo(v.tipo||'despesa');
+      $('overlayLanc').classList.add('open');
+    });
+  } else {
+    $('mId').value='';
+    $('modalTitulo').textContent='Novo lançamento';
+    $('mDesc').value=''; $('mValor').value='';
+    $('mCat').value='🏠'; $('mFech').value='30'; $('mPago').value='nao';
+    setTipo('despesa');
+    $('overlayLanc').classList.add('open');
+  }
 };
-window.addEventListener('appinstalled',()=>{
-  const b=document.getElementById('btnInstalar'); if(b) b.style.display='none';
-});
+window.fecharModal = ()=>$('overlayLanc').classList.remove('open');
+
+window.setTipo = t=>{
+  tipoAtual=t;
+  $('btnDesp').className='tipo-btn '+(t==='despesa'?'active-desp':'');
+  $('btnRec').className='tipo-btn '+(t==='receita'?'active-rec':'');
+  $('fieldPago').style.display=t==='despesa'?'':'none';
+};
+
+window.salvarLanc = async()=>{
+  const desc=$('mDesc').value.trim();
+  const valor=parseFloat($('mValor').value);
+  if(!desc){alert('Digite a descrição');return;}
+  if(!valor||valor<=0){alert('Digite um valor válido');return;}
+  const item={
+    desc, valor, tipo:tipoAtual,
+    cat:$('mCat').value, fech:parseInt($('mFech').value),
+    pago:tipoAtual==='despesa'?$('mPago').value:'sim',
+    mes:mesAtual, quem:user.uid, quem_nome:userName, ts:Date.now()
+  };
+  const id=$('mId').value;
+  if(id) await set(ref(db,'lancamentos/'+id),item);
+  else await push(ref(db,'lancamentos'),item);
+  fecharModal();
+};
+
+window.excluirItem = id=>{ if(confirm('Excluir este lançamento?')) remove(ref(db,'lancamentos/'+id)); };
+window.editarItem  = id=>abrirModal(id);
+
+window.togglePago = async(id,atual)=>{
+  await set(ref(db,'lancamentos/'+id+'/pago'), atual==='sim'?'nao':'sim');
+};
+window.togglePagoRec = async(recId,mes,atual)=>{
+  await set(ref(db,`pagamentos_rec/${recId}/${mes}`), atual==='sim'?'nao':'sim');
+};
+
+// ── MODAL RECORRENTE ──────────────────────────────
+window.abrirModalRec = ()=>$('overlayRec').classList.add('open');
+window.fecharModalRec = ()=>$('overlayRec').classList.remove('open');
+window.salvarRec = async()=>{
+  const desc=$('rDesc').value.trim();
+  const valor=parseFloat($('rValor').value);
+  if(!desc){alert('Digite a descrição');return;}
+  if(!valor||valor<=0){alert('Digite um valor válido');return;}
+  const item={desc,valor,tipo:$('rTipo').value,cat:$('rCat').value,fech:parseInt($('rFech').value),variavel:$('rVariavel').value};
+  const id=$('rId').value;
+  if(id) await set(ref(db,'recorrentes/'+id),item);
+  else await push(ref(db,'recorrentes'),item);
+  fecharModalRec();
+};
+window.excluirRec = id=>{ if(confirm('Remover esta recorrente? Deixará de aparecer em todos os meses.')) remove(ref(db,'recorrentes/'+id)); };
+
+// ── MODAL VALOR VARIÁVEL ──────────────────────────
+window.abrirModalVal = (recId,mes,val,desc)=>{
+  $('vRecId').value=recId; $('vMes').value=mes; $('vValor').value=val;
+  $('vTitulo').textContent='Atualizar: '+desc;
+  $('overlayVal').classList.add('open');
+};
+window.fecharModalVal = ()=>$('overlayVal').classList.remove('open');
+window.salvarValorVariavel = async()=>{
+  const val=parseFloat($('vValor').value);
+  if(!val||isNaN(val)){alert('Digite um valor válido');return;}
+  await set(ref(db,`valores_variaveis/${$('vRecId').value}/${$('vMes').value}`),val);
+  fecharModalVal();
+};
+
+// Recorrentes page: FAB abre modal recorrente
+const origFab = window.abrirModal;
+$('fabBtn').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(currentPage===2) abrirModalRec();
+  else origFab();
+},true);
 </script>
 </body>
 </html>
