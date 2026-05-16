@@ -53,10 +53,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .fech-block-title{font-size:14px;font-weight:800;color:var(--txt)}
 .fech-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
 .tag-15{background:#dbeafe;color:#1d4ed8}.tag-30{background:#ede9fe;color:#6d28d9}
-.fech-pills{display:flex;gap:8px;margin-bottom:10px}
+.fech-pills{display:flex;gap:8px;margin-bottom:0}
 .fech-pill{flex:1;background:var(--card);border-radius:12px;padding:9px 8px;box-shadow:var(--shadow);text-align:center}
 .fech-pill .pl{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px}
 .fech-pill .pv{font-size:13px;font-weight:800;margin-top:3px}
+.collapse-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:none;background:transparent;font-size:12px;font-weight:700;color:var(--az);cursor:pointer;letter-spacing:.2px;margin-top:4px}
+.collapse-arrow{transition:transform .25s;display:inline-block;font-style:normal}
+.collapse-body{overflow:hidden;max-height:0;transition:max-height .32s ease}
+.collapse-body.open{max-height:3000px}
 /* Section header */
 .sec-hdr{font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 6px;padding-left:2px}
 /* Item */
@@ -338,32 +342,57 @@ function renderHome(l,r,p,v){
   $('homeContent').innerHTML=html;
 }
 
+let _blockId=0;
 function buildBlock(items,titulo,tagCls,mes){
   const desps=items.filter(i=>i.tipo==='despesa');
   const recs=items.filter(i=>i.tipo==='receita');
   const totD=desps.reduce((s,i)=>s+Number(i.valor||0),0);
   const totR=recs.reduce((s,i)=>s+Number(i.valor||0),0);
   const saldo=totR-totD;
-  let html=`<div class="fech-block">
+  const bid='blk'+(++_blockId);
+  let inner='';
+  if(recs.length){inner+=`<div class="sec-hdr">💰 Recebimentos</div>`;recs.forEach(i=>{inner+=itemHTML(i,mes);});}
+  if(desps.length){inner+=`<div class="sec-hdr">💸 Despesas</div>`;desps.forEach(i=>{inner+=itemHTML(i,mes);});}
+  if(!items.length)inner=`<div class="empty-state">Nenhum lançamento neste fechamento</div>`;
+  return`<div class="fech-block">
     <div class="fech-block-hdr"><span class="fech-block-title">${titulo}</span><span class="fech-tag ${tagCls}">${items.length} itens</span></div>
     <div class="fech-pills">
       <div class="fech-pill"><div class="pl">Despesas</div><div class="pv" style="color:var(--vm)">${R(totD)}</div></div>
       <div class="fech-pill"><div class="pl">Receitas</div><div class="pv" style="color:var(--vd)">${R(totR)}</div></div>
       <div class="fech-pill"><div class="pl">Saldo</div><div class="pv" style="color:${saldo>=0?'var(--vd)':'var(--vm)'}">${R(saldo)}</div></div>
-    </div>`;
-  if(recs.length){html+=`<div class="sec-hdr">💰 Recebimentos</div>`;recs.forEach(i=>{html+=itemHTML(i,mes);});}
-  if(desps.length){html+=`<div class="sec-hdr">💸 Despesas</div>`;desps.forEach(i=>{html+=itemHTML(i,mes);});}
-  if(!items.length)html+=`<div class="empty-state">Nenhum lançamento neste fechamento</div>`;
-  html+=`</div>`;
-  return html;
+    </div>
+    <button class="collapse-btn" data-target="${bid}" onclick="toggleBlock(this)"><i class="collapse-arrow" id="arr_${bid}">▾</i> Ver detalhes</button>
+    <div class="collapse-body" id="${bid}">${inner}</div>
+  </div>`;
 }
+window.toggleBlock=function(btn){
+  const id=btn.getAttribute('data-target');
+  const body=document.getElementById(id);
+  const arr=document.getElementById('arr_'+id);
+  const open=body.classList.toggle('open');
+  arr.style.transform=open?'rotate(180deg)':'';
+  btn.childNodes[1].textContent=open?' Ocultar detalhes':' Ver detalhes';
+};
 
 function itemHTML(i,mes){
   const isD=i.tipo==='despesa';
   const bg=isD?'#fef2f2':'#f0fdf4';
-  const pagoBtn=isD?`<button class="pago-toggle ${i.pago==='sim'?'pago':'pend'}" onclick="${i.isRec?`togglePagoRec('${i.id}','${mes}','${i.pago}')`:`togglePago('${i.id}','${i.pago}')`}">${i.pago==='sim'?'✅ Pago':'⏳ Pendente'}</button>`:'';
-  const acts=!i.isRec?`<div class="item-acts"><button class="btn-sm be" onclick="editarItem('${i.id}')">✏️ Editar</button><button class="btn-sm bd" onclick="excluirItem('${i.id}')">🗑️</button></div>`:'';
-  const varBtn=i.isRec&&i.variavel==='sim'?`<button class="btn-sm be" onclick="abrirModalVal('${i.id}','${mes}',${i.valor},'${(i.desc||'').replace(/'/g,"\\'")}')">✏️ Valor</button>`:'';
+  // Use data-* to avoid quote hell
+  const pagoBtn=isD
+    ?`<button class="pago-toggle ${i.pago==='sim'?'pago':'pend'}"
+        data-action="${i.isRec?'pagorec':'pago'}"
+        data-id="${i.id}" data-mes="${mes}" data-pago="${i.pago}">
+        ${i.pago==='sim'?'✅ Pago':'⏳ Pendente'}</button>`
+    :'';
+  const acts=!i.isRec
+    ?`<div class="item-acts">
+        <button class="btn-sm be" data-action="editar" data-id="${i.id}">✏️ Editar</button>
+        <button class="btn-sm bd" data-action="excluir" data-id="${i.id}">🗑️</button>
+      </div>`
+    :'';
+  const varBtn=i.isRec&&i.variavel==='sim'
+    ?`<button class="btn-sm be" data-action="varval" data-id="${i.id}" data-mes="${mes}" data-val="${i.valor}" data-desc="${(i.desc||'').replace(/"/g,'&quot;')}">✏️ Valor</button>`
+    :'';
   return`<div class="item-card"><div class="item-row">
     <div class="item-emoji" style="background:${bg}">${i.cat||'📦'}</div>
     <div class="item-info">
@@ -495,6 +524,31 @@ window.salvarValorVariavel=async()=>{
   fecharModalVal();
   if(currentPage===1)renderHist();
 };
+
+// EVENT DELEGATION — handles all data-action clicks safely
+document.addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-action]');
+  if(!btn)return;
+  const act=btn.dataset.action;
+  const id=btn.dataset.id;
+  const mes=btn.dataset.mes;
+  const pago=btn.dataset.pago;
+  if(act==='pago'){
+    const novo=pago==='sim'?'nao':'sim';
+    await set(ref(db,'lancamentos/'+id+'/pago'),novo);
+    if(currentPage===1)renderHist();
+  }else if(act==='pagorec'){
+    const novo=pago==='sim'?'nao':'sim';
+    await set(ref(db,`pagamentos_rec/${id}/${mes}`),novo);
+    if(currentPage===1)renderHist();
+  }else if(act==='editar'){
+    abrirModal(id);
+  }else if(act==='excluir'){
+    if(confirm('Excluir este lançamento?'))remove(ref(db,'lancamentos/'+id));
+  }else if(act==='varval'){
+    abrirModalVal(id,mes,btn.dataset.val,btn.dataset.desc);
+  }
+});
 </script>
 </body>
 </html>
