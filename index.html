@@ -53,7 +53,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .fech-body{padding:12px 14px}
 .fech-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
 .fech-row:last-child{border:none}
-.fech-total{display:flex;justify-content:space-between;padding:8px 14px;font-size:13px;font-weight:700;border-top:2px solid var(--borda);background:#f8fafc}
+.fech-total{display:flex;justify-content:space-between;padding:8px 14px;font-size:13px;font-weight:700;border-top:1px solid var(--borda);background:#f8fafc}
+.fech-saldo{background:#f0fdf4;border-top:2px solid var(--vd)!important}
+.fech-saldo span:first-child{color:var(--txt2)}
+.fech-rec div.fech-row{padding:4px 14px;font-size:12px;border-bottom:1px solid #f3f4f6}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .section-hdr h3{font-size:14px;font-weight:600;color:var(--txt)}
 .btn-add{background:var(--az);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px}
@@ -182,12 +185,24 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="fech-card">
         <div class="fech-hdr d15">📅 Fechamento Dia 15</div>
         <div class="fech-body" id="f15"><div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div></div>
-        <div class="fech-total"><span>Total</span><span id="t15" style="color:#1e3a8a">R$ 0</span></div>
+        <div class="fech-rec" id="fr15" style="display:none">
+          <div style="padding:4px 14px 2px;font-size:11px;font-weight:600;color:var(--txt3);border-top:1px solid #f3f4f6">RECEITAS ATÉ DIA 15</div>
+          <div id="frlist15"></div>
+        </div>
+        <div class="fech-total"><span>💸 Despesas</span><span id="t15" style="color:#1e3a8a">R$ 0</span></div>
+        <div class="fech-total" id="fs15" style="display:none"><span>💰 Receitas</span><span id="tr15" style="color:var(--vd)">R$ 0</span></div>
+        <div class="fech-total fech-saldo" id="fsd15" style="display:none"><span>📊 Saldo</span><span id="tsd15">R$ 0</span></div>
       </div>
       <div class="fech-card">
         <div class="fech-hdr d30">📅 Fechamento Dia 30</div>
         <div class="fech-body" id="f30"><div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div></div>
-        <div class="fech-total"><span>Total</span><span id="t30" style="color:#6b21a8">R$ 0</span></div>
+        <div class="fech-rec" id="fr30" style="display:none">
+          <div style="padding:4px 14px 2px;font-size:11px;font-weight:600;color:var(--txt3);border-top:1px solid #f3f4f6">RECEITAS ATÉ DIA 30</div>
+          <div id="frlist30"></div>
+        </div>
+        <div class="fech-total"><span>💸 Despesas</span><span id="t30" style="color:#6b21a8">R$ 0</span></div>
+        <div class="fech-total" id="fs30" style="display:none"><span>💰 Receitas</span><span id="tr30" style="color:var(--vd)">R$ 0</span></div>
+        <div class="fech-total fech-saldo" id="fsd30" style="display:none"><span>📊 Saldo</span><span id="tsd30">R$ 0</span></div>
       </div>
     </div>
   </div>
@@ -451,15 +466,56 @@ function render(){
   document.getElementById('kPend').textContent=R(pend);
 
   // Fechamentos
+  // Dia 15: despesas fech=15 + receitas com dia <= 15
+  // Dia 30: despesas fech=30 + receitas com dia > 15 (ou sem fech)
   ['15','30'].forEach(d=>{
-    const lista=itens.filter(i=>i.tipo==='despesa'&&i.fech===d);
-    const tot=lista.reduce((s,i)=>s+i.valor,0);
-    document.getElementById('t'+d).textContent=R(tot);
+    const despesas = itens.filter(i=>i.tipo==='despesa'&&i.fech===d);
+    const totDesp  = despesas.reduce((s,i)=>s+i.valor,0);
+
+    // Receitas: para dia 15 pega receitas com dia de vencimento <= 15, para dia 30 as demais
+    const receitas = itens.filter(i=>{
+      if(i.tipo!=='receita') return false;
+      const diaNum = parseInt((i.data||'').split('-')[2]||'99');
+      return d==='15' ? diaNum<=15 : diaNum>15;
+    });
+    const totRec = receitas.reduce((s,i)=>s+i.valor,0);
+    const saldo  = totRec - totDesp;
+
+    // Despesas
+    document.getElementById('t'+d).textContent=R(totDesp);
     const el=document.getElementById('f'+d);
-    el.innerHTML=lista.length?lista.map(i=>`<div class="fech-row">
+    el.innerHTML=despesas.length?despesas.map(i=>`<div class="fech-row">
       <span>${ICONS[i.categoria]||'📦'} ${i.desc}${i.isRec?' 🔁':''}</span>
-      <span style="color:${i.isRec?(i.pago==='sim'?'var(--vd)':'var(--am)'):i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span>
+      <span style="color:${i.pago==='sim'?'var(--vd)':'var(--am)'};font-weight:600;font-size:12px">${R(i.valor)}</span>
     </div>`).join(''):'<div class="empty" style="padding:12px;font-size:12px">Nenhuma despesa</div>';
+
+    // Receitas
+    const frEl  = document.getElementById('fr'+d);
+    const frList= document.getElementById('frlist'+d);
+    const fsEl  = document.getElementById('fs'+d);
+    const fsdEl = document.getElementById('fsd'+d);
+    const trEl  = document.getElementById('tr'+d);
+    const tsdEl = document.getElementById('tsd'+d);
+
+    if(receitas.length>0){
+      frEl.style.display='';
+      frList.innerHTML=receitas.map(i=>`<div class="fech-row" style="padding:5px 14px;display:flex;justify-content:space-between;font-size:12px">
+        <span>${ICONS[i.categoria]||'📦'} ${i.desc}${i.isRec?' 🔁':''}</span>
+        <span style="color:var(--vd);font-weight:600">${R(i.valor)}</span>
+      </div>`).join('');
+      fsEl.style.display=''; trEl.textContent=R(totRec);
+    } else {
+      frEl.style.display='none'; fsEl.style.display='none';
+    }
+
+    // Saldo sempre visível se houver despesas
+    if(despesas.length>0||receitas.length>0){
+      fsdEl.style.display='';
+      tsdEl.textContent=R(saldo);
+      tsdEl.style.color=saldo>=0?'var(--vd)':'var(--vm)';
+    } else {
+      fsdEl.style.display='none';
+    }
   });
 
   // Lista lançamentos (manuais + recorrentes)
