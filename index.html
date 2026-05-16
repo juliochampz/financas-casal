@@ -135,21 +135,12 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <div class="setup-card">
     <div style="font-size:48px;margin-bottom:12px">💰</div>
     <h2>Finanças do Casal</h2>
-    <p>Configure uma vez. Cole as credenciais do Firebase para conectar os dois dispositivos em tempo real.</p>
-    <div class="setup-steps">
-      <div class="step"><div class="step-num">1</div><p>Acesse <code>console.firebase.google.com</code> → Criar projeto → ative o <strong>Realtime Database</strong> em modo teste</p></div>
-      <div class="step"><div class="step-num">2</div><p>Configurações do projeto → Seus apps → Adicionar app Web → copie as configurações</p></div>
-      <div class="step"><div class="step-num">3</div><p>Cole os dados abaixo e clique em Conectar. Repita no outro dispositivo com as mesmas credenciais</p></div>
-    </div>
+    <p>Bem-vindo! Digite seu nome para entrar.</p>
     <div class="config-form">
-      <label>API Key</label><input id="cfgKey" placeholder="AIzaSy...">
-      <label>Auth Domain</label><input id="cfgAuth" placeholder="projeto.firebaseapp.com">
-      <label>Database URL</label><input id="cfgDb" placeholder="https://projeto-rtdb.firebaseio.com">
-      <label>Project ID</label><input id="cfgPrj" placeholder="meu-projeto">
-      <label>Seu nome</label><input id="cfgNome" placeholder="Ex: João">
+      <label>Seu nome</label>
+      <input id="cfgNome" placeholder="Ex: Julio" style="font-size:16px;padding:12px">
     </div>
-    <button class="btn-primary" onclick="conectar()">🔗 Conectar</button>
-    <p class="setup-note">Configurações salvas no navegador. Gratuito até ~50k leituras/mês no Firebase.</p>
+    <button class="btn-primary" onclick="conectar()">Entrar →</button>
   </div>
 </div>
 
@@ -399,10 +390,15 @@ let pillsRec={nat:'fixo',quem:'conjunto',fech:'15'};
 let nome='';
 
 window.conectar=function(){
-  const cfg={apiKey:document.getElementById('cfgKey').value.trim(),authDomain:document.getElementById('cfgAuth').value.trim(),databaseURL:document.getElementById('cfgDb').value.trim(),projectId:document.getElementById('cfgPrj').value.trim()};
   nome=document.getElementById('cfgNome').value.trim()||'Usuário';
-  if(!cfg.apiKey||!cfg.databaseURL){alert('Preencha API Key e Database URL');return;}
-  localStorage.setItem('fcfg',JSON.stringify(cfg));localStorage.setItem('fnome',nome);
+  if(!nome){alert('Digite seu nome para entrar');return;}
+  localStorage.setItem('fnome',nome);
+  const cfg={
+    apiKey:'AIzaSyC54FUgmARdcGjy1tOVNerFMPvcBL921MI',
+    authDomain:'despesas-c2f24.firebaseapp.com',
+    databaseURL:'https://despesas-c2f24-default-rtdb.firebaseio.com',
+    projectId:'despesas-c2f24'
+  };
   init(cfg);
 };
 
@@ -666,18 +662,24 @@ window.toggleResumo=function(d){
   arr.textContent=open?'▴':'▾';
   lbl.textContent=open?'📊 Ocultar resumo':'📊 Ver resumo';
 };
+
+window.togglePagoRec=async function(recId,mes,pagoAtual){
   const novoPago = pagoAtual==='sim'?'nao':'sim';
   await set(ref(db,`pagamentos_rec/${recId}/${mes}`),novoPago);
 };
 
 // ── AUTO-INICIAR ─────────────────────────────────
-const s=localStorage.getItem('fcfg');
-if(s){
-  nome=localStorage.getItem('fnome')||'Usuário';
-  const cfg=JSON.parse(s);
-  ['cfgKey','cfgAuth','cfgDb','cfgPrj'].forEach((id,i)=>{const vals=[cfg.apiKey,cfg.authDomain,cfg.databaseURL,cfg.projectId];document.getElementById(id).value=vals[i]||'';});
-  document.getElementById('cfgNome').value=nome;
+const cfg={
+  apiKey:'AIzaSyC54FUgmARdcGjy1tOVNerFMPvcBL921MI',
+  authDomain:'despesas-c2f24.firebaseapp.com',
+  databaseURL:'https://despesas-c2f24-default-rtdb.firebaseio.com',
+  projectId:'despesas-c2f24'
+};
+nome=localStorage.getItem('fnome')||'';
+if(nome){
   init(cfg);
+} else {
+  document.getElementById('setupScreen').style.display='flex';
 }
 </script>
 </body>
