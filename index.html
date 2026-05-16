@@ -340,16 +340,17 @@ function renderHome(l,r,p,v){
   html+=buildBlock(f15,'📅 Fechamento Dia 15','tag-15',mes);
   html+=buildBlock(f30,'📅 Fechamento Dia 30','tag-30',mes);
   $('homeContent').innerHTML=html;
+  restoreOpenBlocks();
 }
 
-let _blockId=0;
 function buildBlock(items,titulo,tagCls,mes){
   const desps=items.filter(i=>i.tipo==='despesa');
   const recs=items.filter(i=>i.tipo==='receita');
   const totD=desps.reduce((s,i)=>s+Number(i.valor||0),0);
   const totR=recs.reduce((s,i)=>s+Number(i.valor||0),0);
   const saldo=totR-totD;
-  const bid='blk'+(++_blockId);
+  // Stable ID based on tag class so re-renders don't change IDs
+  const bid='blk_'+tagCls;
   let inner='';
   if(recs.length){inner+=`<div class="sec-hdr">💰 Recebimentos</div>`;recs.forEach(i=>{inner+=itemHTML(i,mes);});}
   if(desps.length){inner+=`<div class="sec-hdr">💸 Despesas</div>`;desps.forEach(i=>{inner+=itemHTML(i,mes);});}
@@ -365,6 +366,7 @@ function buildBlock(items,titulo,tagCls,mes){
     <div class="collapse-body" id="${bid}">${inner}</div>
   </div>`;
 }
+const _openBlocks=new Set();
 window.toggleBlock=function(btn){
   const id=btn.getAttribute('data-target');
   const body=document.getElementById(id);
@@ -372,7 +374,19 @@ window.toggleBlock=function(btn){
   const open=body.classList.toggle('open');
   arr.style.transform=open?'rotate(180deg)':'';
   btn.childNodes[1].textContent=open?' Ocultar detalhes':' Ver detalhes';
+  // Remember state so re-renders restore it
+  if(open)_openBlocks.add(id); else _openBlocks.delete(id);
 };
+function restoreOpenBlocks(){
+  _openBlocks.forEach(id=>{
+    const body=document.getElementById(id);
+    const btn=document.querySelector(`[data-target="${id}"]`);
+    const arr=document.getElementById('arr_'+id);
+    if(body){body.classList.add('open');}
+    if(arr){arr.style.transform='rotate(180deg)';}
+    if(btn){btn.childNodes[1].textContent=' Ocultar detalhes';}
+  });
+}
 
 function itemHTML(i,mes){
   const isD=i.tipo==='despesa';
@@ -435,6 +449,7 @@ async function renderHist(){
   if(recs.length){html+=`<div class="sec-hdr">💰 Recebimentos</div>`;recs.forEach(i=>{html+=itemHTML(i,mesHist);});}
   if(desps.length){html+=`<div class="sec-hdr">💸 Despesas</div>`;desps.forEach(i=>{html+=itemHTML(i,mesHist);});}
   $('histContent').innerHTML=html;
+  restoreOpenBlocks();
 }
 
 // RECORRENTES
@@ -529,16 +544,25 @@ window.salvarValorVariavel=async()=>{
 document.addEventListener('click',async e=>{
   const btn=e.target.closest('[data-action]');
   if(!btn)return;
+  e.stopPropagation(); // prevent bubbling to collapse-btn
   const act=btn.dataset.action;
   const id=btn.dataset.id;
   const mes=btn.dataset.mes;
   const pago=btn.dataset.pago;
   if(act==='pago'){
     const novo=pago==='sim'?'nao':'sim';
+    // Update button visually immediately (no full re-render = no collapse)
+    btn.dataset.pago=novo;
+    btn.className='pago-toggle '+(novo==='sim'?'pago':'pend');
+    btn.textContent=novo==='sim'?'✅ Pago':'⏳ Pendente';
     await set(ref(db,'lancamentos/'+id+'/pago'),novo);
     if(currentPage===1)renderHist();
   }else if(act==='pagorec'){
     const novo=pago==='sim'?'nao':'sim';
+    // Update button visually immediately
+    btn.dataset.pago=novo;
+    btn.className='pago-toggle '+(novo==='sim'?'pago':'pend');
+    btn.textContent=novo==='sim'?'✅ Pago':'⏳ Pendente';
     await set(ref(db,`pagamentos_rec/${id}/${mes}`),novo);
     if(currentPage===1)renderHist();
   }else if(act==='editar'){
